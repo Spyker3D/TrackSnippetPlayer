@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.0"
+kotlin = "2.1.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -8,6 +8,30 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2024.04.01"
+navigationCompose = "2.8.4"
+kotlinxSerializationJson = "1.6.3"
+roomCompilerVersion = "2.6.1"
+roomCommon = "2.6.1"
+ksp = "2.1.0-1.0.29"
+hilt = "2.52"
+hiltExt = "1.2.0"
+androidxHiltNavigationCompose = "1.2.0"
+androidxLifecycle = "2.6.0-alpha03"
+androidxNavigation = "2.5.3"
+androidxComposeCompiler = "1.4.3"
+gson = "2.10.1"
+androidxTestCore = "1.6.1"
+androidxTestExt = "1.2.1"
+androidxTestRules = "1.6.1"
+androidxTestRunner = "1.6.2"
+androidxEspresso = "3.6.1"
+androidxUiAutomator = "2.3.0"
+androidxWork = "2.10.0"
+kotlinxCoroutines = "1.9.0"
+junit4 = "4.13.2"
+androidxArchCore = "2.2.0"
+truth = "1.4.2"
+detektCompose = "0.4.16"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,9 +48,58 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+
+# Navigation
+androidx-hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "androidxHiltNavigationCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+#room
+room = { group = "androidx.room", name = "room-runtime", version.ref = "roomCommon" }
+room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomCommon" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCompilerVersion" }
+
+#hilt
+
+hilt-android-core = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
+hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "hilt" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+hilt-ext-compiler = { group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltExt" }
+hilt-ext-work = { group = "androidx.hilt", name = "hilt-work", version.ref = "hiltExt" }
+
+#test
+
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
+androidx-test-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "androidxEspresso" }
+androidx-test-espresso-intents = { group = "androidx.test.espresso", name = "espresso-intents", version.ref = "androidxEspresso" }
+androidx-test-espresso-idling-resources = { group = "androidx.test.espresso", name = "espresso-idling-resource", version.ref = "androidxEspresso" }
+androidx-test-espresso-idling-concurrent = { group = "androidx.test.espresso.idling", name = "idling-concurrent", version.ref = "androidxEspresso" }
+androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidxTestRules" }
+androidx-test-runner = { group = "androidx.test", name = "runner", version.ref = "androidxTestRunner" }
+androidx-test-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "androidxUiAutomator" }
+androidx-work-testing = { group = "androidx.work", name = "work-testing", version.ref = "androidxWork" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
+room-testing = { group = "androidx.room", name = "room-testing", version.ref = "roomCommon" }
+androidx-compose-ui-test-junit = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+androidx-compose-ui-tooling-core = { group = "androidx.compose.ui", name = "ui-tooling" }
+androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+androidx-archcore-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "androidxArchCore" }
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
+androidx-navigation-testing = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxNavigation" }
+google-truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
-
+room = { id = "androidx.room", version.ref = "roomCommon" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp"}
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
+kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
