@@ -1,4 +1,4 @@
-package com.spyker3d.tracksnippetplayer
+package com.spyker3d.tracksnippetplayer.root
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
