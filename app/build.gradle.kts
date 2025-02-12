@@ -7,6 +7,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+hilt {
+    enableAggregatingTask = false
+}
+
 android {
     namespace = "com.spyker3d.tracksnippetplayer"
     compileSdk = 35
