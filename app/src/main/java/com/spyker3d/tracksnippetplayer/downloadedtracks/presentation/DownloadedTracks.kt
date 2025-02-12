@@ -20,7 +20,7 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 @Composable
 fun DownloadedTracksScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: () -> Unit
+    onNavigateToAudioPlayer: (trackId: String) -> Unit
 ) {
     Box(
         modifier = modifier,
