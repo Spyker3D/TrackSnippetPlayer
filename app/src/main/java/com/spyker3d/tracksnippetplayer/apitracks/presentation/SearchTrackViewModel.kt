@@ -57,14 +57,14 @@ class SearchTrackViewModel @Inject constructor(
                     _showToast.emit(R.string.error_nothing_found)
                 }
             } catch (e: Exception) {
-                when(e) {
+                when (e) {
                     is IOException -> {
-                        searchTrackState = SearchState.ConnectionError(e.message ?: "")
+                        searchTrackState = SearchState.Error
                         _showToast.emit(R.string.error_connection)
                     }
+
                     else -> {
-                        searchTrackState = SearchState.OtherError(e.message ?: "")
-                        Log.e("TEST", "Something went wrong: ${e.message}", e)
+                        searchTrackState = SearchState.Error
                         _showToast.emit(R.string.something_wrong)
                     }
                 }

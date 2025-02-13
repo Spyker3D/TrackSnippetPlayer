@@ -37,7 +37,7 @@ fun SearchTextField(
             .padding(horizontal = 16.dp, vertical = 8.dp)
             .clip(RoundedCornerShape(28.dp))
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.outlineVariant),
+            .background(MaterialTheme.colorScheme.secondary),
         value = text,
         onValueChange = onTextChanged,
         singleLine = true,

@@ -44,7 +44,10 @@ object TrackMapper {
             link = link,
             duration = trackTimeMillisFormat(durationInSec),
             audioPreview = audioPreview,
-            image = image
+            image = image,
+            albumImageSmall = album.albumCoverSmall,
+            albumImageMedium = album.albumCoverMedium,
+            albumImageBig = album.albumCoverBig
         )
     }
 }

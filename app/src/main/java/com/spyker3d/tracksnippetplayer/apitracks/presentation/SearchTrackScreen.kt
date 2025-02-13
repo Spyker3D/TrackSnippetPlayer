@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
@@ -77,10 +78,9 @@ fun SearchTrackScreen(
                                 )
                             }
 
-                            is SearchState.ConnectionError -> Unit // УДАЛИТЬ СОСТОЯНИЕ?
                             SearchState.Empty -> Unit // УДАЛИТЬ СОСТОЯНИЕ?
                             SearchState.Loading -> LoadingScreen()
-                            is SearchState.OtherError -> Unit // УДАЛИТЬ СОСТОЯНИЕ?
+                            SearchState.Error -> Unit
                         }
 
                         val context = LocalContext.current
@@ -145,7 +145,10 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
                         link = "test.ru",
                         duration = "4:33",
                         audioPreview = "test3.ru",
-                        image = "test4.ru"
+                        image = "test4.ru",
+                        albumImageSmall = "small.ru",
+                        albumImageMedium = "medium.ru",
+                        albumImageBig = "big.ru"
                     ),
                     Track(
                         id = 123,
@@ -155,7 +158,10 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
                         link = "test.ru",
                         duration = "4:33",
                         audioPreview = "test3.ru",
-                        image = "test4.ru"
+                        image = "test4.ru",
+                        albumImageSmall = "small.ru",
+                        albumImageMedium = "medium.ru",
+                        albumImageBig = "big.ru"
                     ),
                     Track(
                         id = 123,
@@ -165,11 +171,14 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
                         link = "test.ru",
                         duration = "4:33",
                         audioPreview = "test3.ru",
-                        image = "test4.ru"
+                        image = "test4.ru",
+                        albumImageSmall = "small.ru",
+                        albumImageMedium = "medium.ru",
+                        albumImageBig = "big.ru"
                     ),
                 )
             ),
-            showToast = TODO()
+            showToast = MutableSharedFlow<Int>()
         )
     }
 }
