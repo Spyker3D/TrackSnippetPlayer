@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">TrackSnippetPlayer</string>
+    <string name="error_nothing_found">Ничего не найдено</string>
+    <string name="error_connection">Ошибка соединения</string>
+    <string name="something_wrong">Что-то пошло не так</string>
+    <string name="search_hint">Поиск по исполнителю, треку, альбому</string>
 </resources>

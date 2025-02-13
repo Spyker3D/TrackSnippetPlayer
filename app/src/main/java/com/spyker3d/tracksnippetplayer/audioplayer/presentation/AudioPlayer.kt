@@ -20,7 +20,7 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 @Composable
 fun AudioPlayerScreen(
     modifier: Modifier = Modifier,
-    trackId: String,
+    trackId: Int,
     onBackPressed: () -> Unit
 ) {
     Box(
@@ -81,7 +81,7 @@ private fun TopBar(
 fun CurrentPurchasesListScreenScaffoldPreview() {
     TrackSnippetPlayerTheme {
         AudioPlayerScreen(
-            trackId = "123",
+            trackId = 123,
             onBackPressed = {})
     }
 }

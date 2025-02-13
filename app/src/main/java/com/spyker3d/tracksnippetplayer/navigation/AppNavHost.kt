@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,7 +34,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.spyker3d.tracksnippetplayer.R
+import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchState
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackScreen
+import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
@@ -125,11 +129,19 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable<ApiTracks> {
-                SearchTrackScreen(onNavigateToAudioPlayer = { id ->
-                    navController.navigate(
-                        route = AudioPlayer(id = id)
-                    )
-                })
+                val searchTrackViewModel: SearchTrackViewModel = hiltViewModel()
+                val searchState: SearchState = searchTrackViewModel.searchTrackState
+
+                SearchTrackScreen(
+                    onNavigateToAudioPlayer = { id ->
+                        navController.navigate(
+                            route = AudioPlayer(id = id)
+                        )
+                    },
+                    searchState = searchState,
+                    onSearchTrack = searchTrackViewModel::searchTrack,
+                    showToast = searchTrackViewModel.showToast
+                )
             }
 
             composable<DownloadedTracks> {
@@ -159,5 +171,5 @@ object DownloadedTracks
 
 @Serializable
 data class AudioPlayer(
-    val id: String,
+    val id: Int,
 )

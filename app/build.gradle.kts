@@ -107,6 +107,8 @@ dependencies {
 
     // Jetpack Compose
     val composeBom = platform(libs.androidx.compose.bom)
+    implementation(libs.androidx.foundation)
+
     // / Dependencies for local unit tests
     testImplementation(composeBom)
     testImplementation(libs.junit4)
@@ -129,5 +131,17 @@ dependencies {
     // Gson and Json (Serialization)
     implementation(libs.gson)
     implementation(libs.kotlinx.serialization.json)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+
+    // OkHttp logging interceptor
+    implementation(libs.logging.interceptor)
+
+    //Glide
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
+    implementation(libs.compose)
+
 
 }
