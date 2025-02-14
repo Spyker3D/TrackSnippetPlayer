@@ -47,7 +47,7 @@ fun TrackList(
     listOfTracks: List<Track>,
     isDeleteIconVisible: Boolean,
     onDeleteItemListener: (Int) -> Unit,
-    onClickListener: (Int) -> Unit,
+    onClickListener: (Int, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -67,7 +67,7 @@ fun TrackList(
                        .height(64.dp)
                        .fillMaxWidth()
                        .padding(horizontal = 16.dp)
-                       .clickable { onClickListener(track.id) },
+                       .clickable { onClickListener(track.id, track.audioPreview) },
                    verticalAlignment = Alignment.CenterVertically,
                    horizontalArrangement = Arrangement.SpaceBetween
                ) {
@@ -202,7 +202,7 @@ fun TrackListPreview() {
             ),
             isDeleteIconVisible = true,
             onDeleteItemListener = { },
-            onClickListener = { }
+            onClickListener = { int, string -> Unit }
         )
     }
 }

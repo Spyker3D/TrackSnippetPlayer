@@ -3,6 +3,8 @@ agp = "8.7.3"
 compiler = "4.16.0"
 compose = "1.0.0-beta01"
 converterGson = "2.11.0"
+exoplayer = "2.19.1"
+exoplayerUi = "2.19.1"
 glide = "4.16.0"
 kotlin = "2.1.0"
 coreKtx = "1.15.0"
@@ -45,6 +47,8 @@ androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+exoplayer = { module = "com.google.android.exoplayer:exoplayer", version.ref = "exoplayer" }
+exoplayer-ui = { module = "com.google.android.exoplayer:exoplayer-ui", version.ref = "exoplayerUi" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

@@ -35,7 +35,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @Composable
 fun SearchTrackScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Int) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Int, trackPreviewUrl: String) -> Unit,
     searchState: SearchState,
     onSearchTrack: (trackName: String) -> Unit,
     showToast: SharedFlow<Int>
@@ -74,7 +74,8 @@ fun SearchTrackScreen(
                                     listOfTracks = searchState.trackList,
                                     isDeleteIconVisible = false,
                                     onDeleteItemListener = {},
-                                    onClickListener = { onNavigateToAudioPlayer(it) }
+                                    onClickListener = { trackId, trackAudioPreview ->
+                                        onNavigateToAudioPlayer(trackId, trackAudioPreview) }
                                 )
                             }
 
@@ -133,7 +134,7 @@ private fun TopBar(
 fun CurrentPurchasesListScreenScaffoldPreview() {
     TrackSnippetPlayerTheme {
         SearchTrackScreen(
-            onNavigateToAudioPlayer = {},
+            onNavigateToAudioPlayer = {int, string-> Unit },
             onSearchTrack = {},
             searchState = SearchState.Content(
                 listOf(

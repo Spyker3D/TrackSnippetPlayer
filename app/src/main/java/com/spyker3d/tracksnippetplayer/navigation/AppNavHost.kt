@@ -11,6 +11,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +39,8 @@ import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchState
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackScreen
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewModel
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
 import kotlinx.serialization.Serializable
@@ -133,9 +136,13 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 val searchState: SearchState = searchTrackViewModel.searchTrackState
 
                 SearchTrackScreen(
-                    onNavigateToAudioPlayer = { id ->
+                    onNavigateToAudioPlayer = { id, trackPreviewUrl ->
                         navController.navigate(
-                            route = AudioPlayer(id = id)
+                            route = AudioPlayer(
+                                id = id,
+                                trackPreviewUrl = trackPreviewUrl,
+                                isDownloadedScreen = false
+                            )
                         )
                     },
                     searchState = searchState,
@@ -145,18 +152,41 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             composable<DownloadedTracks> {
-                DownloadedTracksScreen(onNavigateToAudioPlayer = { id ->
+                DownloadedTracksScreen(onNavigateToAudioPlayer = { id, trackPreviewUrl ->
                     navController.navigate(
-                        route = AudioPlayer(id = id)
+                        route = AudioPlayer(
+                            id = id,
+                            trackPreviewUrl = trackPreviewUrl,
+                            isDownloadedScreen = true
+                        )
                     )
                 })
             }
 
             composable<AudioPlayer> {
                 val args = it.toRoute<AudioPlayer>()
+                val isDownloadedScreen = args.isDownloadedScreen
+
+                val audioPlayerViewModel: AudioPlayerViewModel = hiltViewModel()
+                val audioPlayerState: PlaybackState = audioPlayerViewModel.playbackState
+
+                val exoPlayer = audioPlayerViewModel.exoPlayer
+
+                LaunchedEffect(args.trackPreviewUrl) {
+                    audioPlayerViewModel.preparePlayer(args.trackPreviewUrl)
+                }
+
                 AudioPlayerScreen(
                     trackId = args.id,
-                    onBackPressed = { navController.popBackStack() }
+                    trackPreviewUrl = args.trackPreviewUrl,
+                    onBackPressed = { navController.popBackStack() },
+                    playbackState = audioPlayerState,
+                    onRewind = audioPlayerViewModel::rewind,
+                    onPlayPause = audioPlayerViewModel::playPause,
+                    onFastForward = audioPlayerViewModel::fastForward,
+                    onSeekTo = audioPlayerViewModel::seekTo,
+                    isDownloadsScreen = isDownloadedScreen,
+                    exoPlayer = exoPlayer
                 )
             }
         }
@@ -172,4 +202,6 @@ object DownloadedTracks
 @Serializable
 data class AudioPlayer(
     val id: Int,
+    val trackPreviewUrl: String,
+    val isDownloadedScreen: Boolean
 )
