@@ -30,6 +30,7 @@ class AudioPlayerService : LifecycleService() {
 
     private var trackName = ""
     private var artistName = ""
+    private var lastTrackUrl = ""
 
     override fun onCreate() {
         super.onCreate()
@@ -103,6 +104,7 @@ class AudioPlayerService : LifecycleService() {
                 intent.getStringExtra("TRACK_URL")?.let { trackUrl ->
                     val mediaItem = MediaItem.fromUri(trackUrl)
                     exoPlayer.setMediaItem(mediaItem)
+//                    exoPlayer.playWhenReady = false
                     exoPlayer.prepare()
                 }
                 trackName = intent.getStringExtra("TRACK_NAME") ?: ""
