@@ -7,7 +7,6 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.browse.MediaBrowser
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
@@ -34,13 +33,10 @@ class AudioPlayerService : LifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        // Инициализируем MediaSession для управления уведомлением
         mediaSession = MediaSessionCompat(this, "AudioPlayerService")
 
-        // Инициализируем ExoPlayer
         exoPlayer = ExoPlayer.Builder(this).build()
 
-        // Добавляем слушатель, который обновляет состояние плеера через Flow
         exoPlayer.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 updatePlaybackState()
