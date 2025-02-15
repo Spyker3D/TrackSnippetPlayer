@@ -1,7 +1,6 @@
 package com.spyker3d.tracksnippetplayer.audioplayer.presentation
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,17 +24,14 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 
@@ -51,10 +47,18 @@ fun AudioPlayerScreen(
     onPlayPause: () -> Unit,
     onFastForward: () -> Unit,
     isDownloadsScreen: Boolean,
-    exoPlayer: ExoPlayer
+//    exoPlayer: ExoPlayer,
+//    onStartService: (context: Context, url: String) -> Unit,
+    prepareTrack: (String) -> Unit
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(trackPreviewUrl) {
+        prepareTrack(trackPreviewUrl)
+    }
+
     Box(
-        modifier = modifier,
+        modifier = modifier.fillMaxSize(),
     ) {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surface,
@@ -77,7 +81,6 @@ fun AudioPlayerScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        // Слайдер для отображения прогресса воспроизведения
                         Slider(
                             value = if (playbackState.duration > 0)
                                 playbackState.currentPosition.toFloat() / playbackState.duration.toFloat()
@@ -88,7 +91,6 @@ fun AudioPlayerScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
-                        // Отображение текущего времени и общей длительности
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
@@ -103,7 +105,6 @@ fun AudioPlayerScreen(
                             )
                         }
                         Spacer(modifier = Modifier.height(32.dp))
-                        // Кнопки управления плеером
                         Row(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
@@ -112,7 +113,7 @@ fun AudioPlayerScreen(
                                 Image(
                                     modifier = Modifier
                                         .padding(16.dp)
-                                        .clickable {  }, // дописать логику переключения на другой трек
+                                        .clickable { }, // дописать логику переключения на другой трек
                                     painter = painterResource(id = R.drawable.png_previous_100),
                                     contentDescription = "Rewind",
                                 )
@@ -127,7 +128,9 @@ fun AudioPlayerScreen(
                             Image(
                                 modifier = Modifier
                                     .padding(16.dp)
-                                    .clickable { onPlayPause.invoke() },
+                                    .clickable {
+                                        onPlayPause.invoke()
+                                    },
                                 painter = if (playbackState.isPlaying) {
                                     painterResource(id = R.drawable.png_pause_100)
                                 } else {
@@ -146,7 +149,7 @@ fun AudioPlayerScreen(
                                 Image(
                                     modifier = Modifier
                                         .padding(16.dp)
-                                        .clickable {  }, // дописать логику переключения на другой трек
+                                        .clickable { }, // дописать логику переключения на другой трек
                                     painter = painterResource(id = R.drawable.png_next_100),
                                     contentDescription = "Rewind",
                                 )
@@ -215,7 +218,9 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             onFastForward = {},
             onSeekTo = {},
             isDownloadsScreen = true,
-            exoPlayer = ExoPlayer.Builder(LocalContext.current).build()
+            prepareTrack = {},
+//            exoPlayer = ExoPlayer.Builder(LocalContext.current).build(),
+//            onStartService = { context, url -> Unit }
         )
     }
 }

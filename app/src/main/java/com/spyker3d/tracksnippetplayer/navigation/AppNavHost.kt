@@ -11,7 +11,8 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -27,7 +28,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -168,25 +168,27 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 val isDownloadedScreen = args.isDownloadedScreen
 
                 val audioPlayerViewModel: AudioPlayerViewModel = hiltViewModel()
-                val audioPlayerState: PlaybackState = audioPlayerViewModel.playbackState
+                val audioPlayerState: State<PlaybackState> = audioPlayerViewModel.playbackState.collectAsState()
 
-                val exoPlayer = audioPlayerViewModel.exoPlayer
+//                val exoPlayer = audioPlayerViewModel.exoPlayer
 
-                LaunchedEffect(args.trackPreviewUrl) {
-                    audioPlayerViewModel.preparePlayer(args.trackPreviewUrl)
-                }
+//                LaunchedEffect(args.trackPreviewUrl) {
+//                    audioPlayerViewModel.preparePlayer(args.trackPreviewUrl)
+//                }
 
                 AudioPlayerScreen(
                     trackId = args.id,
                     trackPreviewUrl = args.trackPreviewUrl,
                     onBackPressed = { navController.popBackStack() },
-                    playbackState = audioPlayerState,
+                    playbackState = audioPlayerState.value,
                     onRewind = audioPlayerViewModel::rewind,
                     onPlayPause = audioPlayerViewModel::playPause,
                     onFastForward = audioPlayerViewModel::fastForward,
                     onSeekTo = audioPlayerViewModel::seekTo,
                     isDownloadsScreen = isDownloadedScreen,
-                    exoPlayer = exoPlayer
+                    prepareTrack = audioPlayerViewModel::prepareTrack
+//                    exoPlayer = exoPlayer,
+//                    onStartService = audioPlayerViewModel::startAudioPlayerService,
                 )
             }
         }
