@@ -47,7 +47,7 @@ fun TrackList(
     listOfTracks: List<Track>,
     isDeleteIconVisible: Boolean,
     onDeleteItemListener: (Int) -> Unit,
-    onClickListener: (Int) -> Unit,
+    onClickListener: (Int, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -57,99 +57,97 @@ fun TrackList(
         ),
         verticalArrangement = Arrangement.spacedBy(0.dp)
     ) {
-       items(listOfTracks) { track ->
-           Column(
-               modifier = Modifier
-                   .background(MaterialTheme.colorScheme.surface)
-           ) {
-               Row(
-                   modifier = Modifier
-                       .height(64.dp)
-                       .fillMaxWidth()
-                       .padding(horizontal = 16.dp)
-                       .clickable { onClickListener(track.id) },
-                   verticalAlignment = Alignment.CenterVertically,
-                   horizontalArrangement = Arrangement.SpaceBetween
-               ) {
-                   Row(
-                       verticalAlignment = Alignment.CenterVertically
-                   ) {
-                       GlideImage(
-                           modifier = Modifier
-                               .clip(RoundedCornerShape(2.dp))
-                               .size(45.dp),
-                           model = track.albumImageMedium,
-                           contentScale = ContentScale.Fit,
-                           loading = placeholder(R.drawable.ic_placeholder),
-                           failure = placeholder(R.drawable.ic_placeholder),
-                           contentDescription = track.albumName
-                       )
-                       Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-                       Column {
-                           Text(
-                               modifier = Modifier
-                                   .padding(vertical = 8.dp)
-                                   .weight(1f),
-                               text = track.name,
-                               fontFamily = FontFamily(Font(R.font.roboto_regular)),
-                               fontSize = 16.sp,
-                               color = MaterialTheme.colorScheme.onSurface,
-                               maxLines = 1,
-                               overflow = TextOverflow.Ellipsis
-                           )
-                           Row() {
-                               Text(
-                                   modifier = Modifier.weight(2f, fill = false),
-                                   style = MaterialTheme.typography.bodySmall,
-                                   color = MaterialTheme.colorScheme.onSurface,
-                                   text = track.artistName,
-                                   overflow = TextOverflow.Ellipsis,
-                                   maxLines = 1
-                               )
-                               Spacer(modifier = Modifier.width(4.dp))
-                               Icon(
-                                   painter = painterResource(id = R.drawable.ic_divider),
-                                   contentDescription = null,
-                                   tint = MaterialTheme.colorScheme.onSurface,
-                                   modifier = Modifier
-                                       .size(8.dp)
-                                       .align(Alignment.CenterVertically)
-                               )
-                               Spacer(modifier = Modifier.width(4.dp))
-                               Text(
-                                   modifier = Modifier.weight(1f),
-                                   style = MaterialTheme.typography.bodySmall,
-                                   color = MaterialTheme.colorScheme.onSurface,
-                                   text = track.duration
-                               )
-                           }
-                           Spacer(modifier = Modifier.height(8.dp))
-                       }
-                   }
+        items(listOfTracks) { track ->
+            Column(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.surface)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .height(64.dp)
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clickable { onClickListener(track.id, track.audioPreview) },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        GlideImage(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(2.dp))
+                                .size(45.dp),
+                            model = track.albumImageMedium,
+                            contentScale = ContentScale.Fit,
+                            loading = placeholder(R.drawable.ic_placeholder_track_list),
+                            failure = placeholder(R.drawable.ic_placeholder_track_list),
+                            contentDescription = track.albumName
+                        )
+                        Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+                        Column{
+                            Text(
+                                text = track.name,
+                                fontFamily = FontFamily(Font(R.font.roboto_regular)),
+                                fontSize = 16.sp,
+                                color = MaterialTheme.colorScheme.onSurface,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Start
+                            ) {
+                                Text(
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    text = track.artistName,
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_divider),
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.onSurface,
+                                    modifier = Modifier
+                                        .size(8.dp)
+                                        .align(Alignment.CenterVertically)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface,
+                                    text = track.duration
+                                )
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
 
-                   if(isDeleteIconVisible) {
-                       Icon(
-                           modifier = Modifier
-                               .padding(
-                                   start = 16.dp,
-                                   top = 16.dp,
-                                   bottom = 16.dp,
-                                   end = 12.dp
-                               )
-                               .clickable { onDeleteItemListener.invoke(track.id) },
-                           imageVector = Icons.Filled.Delete,
-                           contentDescription = null,
-                           tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                       )
-                   }
-               }
-               HorizontalDivider(
-                   modifier = Modifier
-                       .fillMaxWidth(),
-                   color = MaterialTheme.colorScheme.outlineVariant,
-                   thickness = 0.5.dp
-               )
-           }
+                    if (isDeleteIconVisible) {
+                        Icon(
+                            modifier = Modifier
+                                .padding(
+                                    start = 16.dp,
+                                    top = 16.dp,
+                                    bottom = 16.dp,
+                                    end = 12.dp
+                                )
+                                .clickable { onDeleteItemListener.invoke(track.id) },
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    thickness = 0.5.dp
+                )
+            }
         }
     }
 }
@@ -202,7 +200,7 @@ fun TrackListPreview() {
             ),
             isDeleteIconVisible = true,
             onDeleteItemListener = { },
-            onClickListener = { }
+            onClickListener = { int, string -> Unit }
         )
     }
 }

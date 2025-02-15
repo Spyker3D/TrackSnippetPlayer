@@ -143,5 +143,10 @@ dependencies {
     annotationProcessor(libs.compiler)
     implementation(libs.compose)
 
+    // ExoPlayer
+    implementation(libs.exoplayer)
+    implementation(libs.exoplayer.ui)
 
+    //LifecycleService
+    implementation(libs.androidx.lifecycle.service)
 }

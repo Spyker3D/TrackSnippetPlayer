@@ -29,13 +29,14 @@ import androidx.compose.ui.unit.sp
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
+import com.spyker3d.tracksnippetplayer.utils.makeToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun SearchTrackScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Int) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Int, trackPreviewUrl: String) -> Unit,
     searchState: SearchState,
     onSearchTrack: (trackName: String) -> Unit,
     showToast: SharedFlow<Int>
@@ -74,7 +75,8 @@ fun SearchTrackScreen(
                                     listOfTracks = searchState.trackList,
                                     isDeleteIconVisible = false,
                                     onDeleteItemListener = {},
-                                    onClickListener = { onNavigateToAudioPlayer(it) }
+                                    onClickListener = { trackId, trackAudioPreview ->
+                                        onNavigateToAudioPlayer(trackId, trackAudioPreview) }
                                 )
                             }
 
@@ -95,10 +97,6 @@ fun SearchTrackScreen(
             }
         )
     }
-}
-
-private fun makeToast(context: Context, errorId: Int) {
-    Toast.makeText(context, context.getString(errorId), Toast.LENGTH_SHORT).show()
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,7 +131,7 @@ private fun TopBar(
 fun CurrentPurchasesListScreenScaffoldPreview() {
     TrackSnippetPlayerTheme {
         SearchTrackScreen(
-            onNavigateToAudioPlayer = {},
+            onNavigateToAudioPlayer = {int, string-> Unit },
             onSearchTrack = {},
             searchState = SearchState.Content(
                 listOf(
