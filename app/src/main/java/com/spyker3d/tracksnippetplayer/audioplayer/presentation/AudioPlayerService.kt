@@ -29,6 +29,9 @@ class AudioPlayerService : LifecycleService() {
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSessionCompat
 
+    private var trackName = ""
+    private var artistName = ""
+
     override fun onCreate() {
         super.onCreate()
         // Инициализируем MediaSession для управления уведомлением
@@ -106,6 +109,8 @@ class AudioPlayerService : LifecycleService() {
                     exoPlayer.setMediaItem(mediaItem)
                     exoPlayer.prepare()
                 }
+                trackName = intent.getStringExtra("TRACK_NAME") ?: ""
+                artistName = intent.getStringExtra("ARTIST_NAME") ?: ""
             }
 
             ACTION_PLAY -> {
@@ -183,8 +188,8 @@ class AudioPlayerService : LifecycleService() {
         )
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Audio Player")
-            .setContentText("Playing audio")
+            .setContentTitle(trackName)
+            .setContentText(artistName)
             .setSmallIcon(R.drawable.ic_music_note)
             .addAction(rewindAction)
             .addAction(playPauseAction)

@@ -1,6 +1,5 @@
 package com.spyker3d.tracksnippetplayer.apitracks.presentation
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,9 +46,7 @@ class SearchTrackViewModel @Inject constructor(
             delay(INPUT_TRACK_SEARCH_DELAY)
             searchTrackState = SearchState.Loading
             try {
-                Log.e("TEST", "search track in ViewModel")
                 val response = searchTrackUseCase.searchTrack(trackName)
-                Log.e("TEST", "response in viewmodel: $response")
                 if (response.isNotEmpty()) {
                     searchTrackState = SearchState.Content(response)
                 } else {

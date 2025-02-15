@@ -7,11 +7,15 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,13 +31,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
+import com.bumptech.glide.integration.compose.placeholder
 import com.spyker3d.tracksnippetplayer.R
+import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
+import com.spyker3d.tracksnippetplayer.apitracks.presentation.LoadingScreen
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
+import com.spyker3d.tracksnippetplayer.utils.makeToast
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun AudioPlayerScreen(
@@ -47,16 +64,10 @@ fun AudioPlayerScreen(
     onPlayPause: () -> Unit,
     onFastForward: () -> Unit,
     isDownloadsScreen: Boolean,
-//    exoPlayer: ExoPlayer,
-//    onStartService: (context: Context, url: String) -> Unit,
-    prepareTrack: (String) -> Unit
+    prepareTrack: (String, String, String) -> Unit,
+    trackState: TrackState,
+    showToast: SharedFlow<Int>
 ) {
-    val context = LocalContext.current
-
-    LaunchedEffect(trackPreviewUrl) {
-        prepareTrack(trackPreviewUrl)
-    }
-
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -81,6 +92,19 @@ fun AudioPlayerScreen(
                             .padding(16.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
+                        when (trackState) {
+                            is TrackState.Success -> {
+                                val track = trackState.data
+                                LaunchedEffect(trackPreviewUrl) {
+                                    prepareTrack(trackPreviewUrl, track.name, track.artistName)
+                                }
+                                showTrackInfo(track)
+                            }
+
+                            TrackState.Loading -> LoadingScreen()
+                            TrackState.Error -> Unit
+                            TrackState.Idle -> Unit
+                        }
                         Slider(
                             value = if (playbackState.duration > 0)
                                 playbackState.currentPosition.toFloat() / playbackState.duration.toFloat()
@@ -155,10 +179,77 @@ fun AudioPlayerScreen(
                                 )
                             }
                         }
+
+
+                    }
+                }
+                val context = LocalContext.current
+                LaunchedEffect(Unit) {
+                    showToast.collect { messageId ->
+                        makeToast(
+                            context = context,
+                            errorId = messageId
+                        )
                     }
                 }
             }
         )
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class)
+@Composable
+private fun showTrackInfo(track: Track) {
+    GlideImage(
+        modifier = Modifier
+            .clip(RoundedCornerShape(2.dp))
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .padding(16.dp),
+        model = track.albumImageMedium,
+        contentScale = ContentScale.Fit,
+        loading = placeholder(R.drawable.ic_placeholder_audioplayer),
+        failure = placeholder(R.drawable.ic_placeholder_audioplayer),
+        contentDescription = track.albumName
+    )
+    Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+    Column {
+        Text(
+            text = track.name,
+            fontFamily = FontFamily(Font(R.font.roboto_regular)),
+            fontSize = 36.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Text(
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                text = track.artistName,
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.ic_divider),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier
+                    .size(8.dp)
+                    .align(Alignment.CenterVertically)
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurface,
+                text = track.duration
+            )
+        }
+        Spacer(modifier = Modifier.height(8.dp))
     }
 }
 
@@ -218,9 +309,23 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             onFastForward = {},
             onSeekTo = {},
             isDownloadsScreen = true,
-            prepareTrack = {},
-//            exoPlayer = ExoPlayer.Builder(LocalContext.current).build(),
-//            onStartService = { context, url -> Unit }
+            prepareTrack = {string1, string2, string3-> Unit },
+            trackState = TrackState.Success(
+                Track(
+                    id = 123,
+                    name = "test track",
+                    artistName = "test artist",
+                    albumName = "test album",
+                    albumImageSmall = "test image small",
+                    albumImageMedium = "test image medium",
+                    albumImageBig = "test image big",
+                    link = "test lint.ru",
+                    duration = "60",
+                    audioPreview = "audio preview url",
+                    image = "image test"
+                )
+            ),
+            showToast = MutableSharedFlow<Int>(),
         )
     }
 }

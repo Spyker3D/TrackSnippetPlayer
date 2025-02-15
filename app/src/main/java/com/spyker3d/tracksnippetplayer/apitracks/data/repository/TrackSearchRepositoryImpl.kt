@@ -9,6 +9,10 @@ import javax.inject.Inject
 class TrackSearchRepositoryImpl @Inject constructor(private val networkClient: NetworkClient) :
     TrackSearchRepository {
     override suspend fun searchTrack(request: String): List<Track> {
-        return networkClient.doRequest(request).results.map { it.mapToDomain() }
+        return networkClient.searchTrackByName(request).results.map { it.mapToDomain() }
+    }
+
+    override suspend fun getTrackById(trackId: Int): Track {
+        return networkClient.searchTrackById(trackId).mapToDomain()
     }
 }

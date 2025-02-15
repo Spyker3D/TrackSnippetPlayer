@@ -41,6 +41,7 @@ import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackViewMod
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TrackState
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
 import kotlinx.serialization.Serializable
@@ -139,7 +140,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onNavigateToAudioPlayer = { id, trackPreviewUrl ->
                         navController.navigate(
                             route = AudioPlayer(
-                                id = id,
+                                trackId = id,
                                 trackPreviewUrl = trackPreviewUrl,
                                 isDownloadedScreen = false
                             )
@@ -155,7 +156,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 DownloadedTracksScreen(onNavigateToAudioPlayer = { id, trackPreviewUrl ->
                     navController.navigate(
                         route = AudioPlayer(
-                            id = id,
+                            trackId = id,
                             trackPreviewUrl = trackPreviewUrl,
                             isDownloadedScreen = true
                         )
@@ -169,15 +170,11 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 
                 val audioPlayerViewModel: AudioPlayerViewModel = hiltViewModel()
                 val audioPlayerState: State<PlaybackState> = audioPlayerViewModel.playbackState.collectAsState()
+                val trackState: TrackState = audioPlayerViewModel.trackState
 
-//                val exoPlayer = audioPlayerViewModel.exoPlayer
-
-//                LaunchedEffect(args.trackPreviewUrl) {
-//                    audioPlayerViewModel.preparePlayer(args.trackPreviewUrl)
-//                }
 
                 AudioPlayerScreen(
-                    trackId = args.id,
+                    trackId = args.trackId,
                     trackPreviewUrl = args.trackPreviewUrl,
                     onBackPressed = { navController.popBackStack() },
                     playbackState = audioPlayerState.value,
@@ -186,9 +183,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onFastForward = audioPlayerViewModel::fastForward,
                     onSeekTo = audioPlayerViewModel::seekTo,
                     isDownloadsScreen = isDownloadedScreen,
-                    prepareTrack = audioPlayerViewModel::prepareTrack
-//                    exoPlayer = exoPlayer,
-//                    onStartService = audioPlayerViewModel::startAudioPlayerService,
+                    prepareTrack = audioPlayerViewModel::prepareTrack,
+                    trackState = trackState,
+                    showToast = audioPlayerViewModel.showToast
                 )
             }
         }
@@ -203,7 +200,7 @@ object DownloadedTracks
 
 @Serializable
 data class AudioPlayer(
-    val id: Int,
+    val trackId: Int,
     val trackPreviewUrl: String,
     val isDownloadedScreen: Boolean
 )

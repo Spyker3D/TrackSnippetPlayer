@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-const val ITUNES_URL = " https://api.deezer.com"
+const val DEEZER_URL = " https://api.deezer.com"
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -23,7 +23,7 @@ object RetrofitModule {
         val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
         return Retrofit.Builder()
-            .baseUrl(ITUNES_URL)
+            .baseUrl(DEEZER_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
