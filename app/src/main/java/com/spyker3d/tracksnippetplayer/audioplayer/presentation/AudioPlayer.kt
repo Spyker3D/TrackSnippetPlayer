@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -66,7 +68,9 @@ fun AudioPlayerScreen(
     isDownloadsScreen: Boolean,
     prepareTrack: (String, String, String) -> Unit,
     trackState: TrackState,
-    showToast: SharedFlow<Int>
+    showToast: SharedFlow<Int>,
+    onDeleteTrack: (Track) -> Unit,
+    onDownloadTrack: (Track) -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -95,10 +99,29 @@ fun AudioPlayerScreen(
                         when (trackState) {
                             is TrackState.Success -> {
                                 val track = trackState.data
-                                LaunchedEffect(trackPreviewUrl) {
-                                    prepareTrack(trackPreviewUrl, track.name, track.artistName)
+
+                                if (!isDownloadsScreen) {
+                                    LaunchedEffect(trackPreviewUrl) {
+                                        prepareTrack(trackPreviewUrl, track.name, track.artistName)
+                                    }
+                                } else {
+                                    LaunchedEffect(track.uriDownload) {
+                                        prepareTrack(
+                                            track.uriDownload,
+                                            track.name,
+                                            track.artistName
+                                        )
+                                    }
                                 }
-                                showTrackInfo(track)
+
+                                showTrackInfo(
+                                    track = track,
+                                    onDeleteListener = onDeleteTrack,
+                                    onDownloadListener = onDownloadTrack,
+                                    onPlayPauseListener = onPlayPause,
+                                    onBackPressedListener = onBackPressed,
+                                    playbackState = playbackState
+                                )
                             }
 
                             TrackState.Loading -> LoadingScreen()
@@ -199,7 +222,14 @@ fun AudioPlayerScreen(
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-private fun showTrackInfo(track: Track) {
+private fun showTrackInfo(
+    track: Track,
+    onDeleteListener: (Track) -> Unit,
+    onDownloadListener: (Track) -> Unit,
+    onPlayPauseListener: () -> Unit,
+    onBackPressedListener: () -> Unit,
+    playbackState: PlaybackState
+) {
     GlideImage(
         modifier = Modifier
             .clip(RoundedCornerShape(2.dp))
@@ -214,14 +244,43 @@ private fun showTrackInfo(track: Track) {
     )
     Spacer(modifier = Modifier.padding(horizontal = 16.dp))
     Column {
-        Text(
-            text = track.name,
-            fontFamily = FontFamily(Font(R.font.roboto_regular)),
-            fontSize = 36.sp,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = track.name,
+                fontFamily = FontFamily(Font(R.font.roboto_regular)),
+                fontSize = 36.sp,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Row {
+                IconButton(onClick = { onDownloadListener(track) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Download,
+                        contentDescription = "Загрузить трек"
+                    )
+                }
+                Spacer(modifier = Modifier.padding(horizontal = 16.dp))
+                IconButton(onClick = {
+                    if (playbackState.isPlaying) {
+                        onPlayPauseListener.invoke()
+                    }
+                    onDeleteListener(track)
+                    onBackPressedListener.invoke()
+
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Удалить трек из загрузок"
+                    )
+                }
+            }
+        }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Start
@@ -309,7 +368,7 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             onFastForward = {},
             onSeekTo = {},
             isDownloadsScreen = true,
-            prepareTrack = {string1, string2, string3-> Unit },
+            prepareTrack = { string1, string2, string3 -> Unit },
             trackState = TrackState.Success(
                 Track(
                     id = 123,
@@ -326,6 +385,8 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
                 )
             ),
             showToast = MutableSharedFlow<Int>(),
+            onDeleteTrack = { },
+            onDownloadTrack = { },
         )
     }
 }

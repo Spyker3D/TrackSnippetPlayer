@@ -149,4 +149,6 @@ dependencies {
 
     //LifecycleService
     implementation(libs.androidx.lifecycle.service)
+
+    implementation(libs.androidx.material.icons.extended)
 }
