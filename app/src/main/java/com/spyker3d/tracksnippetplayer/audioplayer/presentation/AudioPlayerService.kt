@@ -117,6 +117,9 @@ class AudioPlayerService : LifecycleService() {
             }
 
             ACTION_PLAY -> {
+                if (exoPlayer.duration > 0 && exoPlayer.currentPosition >= exoPlayer.duration) {
+                    exoPlayer.seekTo(0)
+                }
                 exoPlayer.play()
             }
 
