@@ -31,6 +31,10 @@ const val ARTIST_NAME = "ARTIST_NAME"
 const val SEEK_POSITION = "SEEK_POSITION"
 const val TRACK_ID = "TRACK_ID"
 const val IS_DOWNLOADS_SCREEN = "IS_DOWNLOADS_SCREEN"
+const val OPEN_AUDIO_PLAYER = "OPEN_AUDIO_PLAYER_NOTIFICATION"
+const val TRACK_ID_NOTIFICATION = "TRACK_ID_NOTIFICATION"
+const val TRACK_PREVIEW_URL_NOTIFICATION = "TRACK_PREVIEW_URL_NOTIFICATION"
+const val IS_DOWNLOADS_SCREEN_NOTIFICATION = "IS_DOWNLOADS_SCREEN_NOTIFICATION"
 
 class AudioPlayerService : LifecycleService() {
     private lateinit var exoPlayer: ExoPlayer
@@ -209,10 +213,10 @@ class AudioPlayerService : LifecycleService() {
                 action = Intent.ACTION_MAIN
                 addCategory(Intent.CATEGORY_LAUNCHER)
                 // Передаем аргументы для открытия экрана аудиоплеера
-                putExtra("openAudioPlayer", true)
-                putExtra("trackId", trackId)
-                putExtra("trackPreviewUrl", lastTrackUrl)
-                putExtra("isDownloadedScreen", isDownloadsScreen)
+                putExtra(OPEN_AUDIO_PLAYER, true)
+                putExtra(TRACK_ID_NOTIFICATION, trackId)
+                putExtra(TRACK_PREVIEW_URL_NOTIFICATION, lastTrackUrl)
+                putExtra(IS_DOWNLOADS_SCREEN_NOTIFICATION, isDownloadsScreen)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )

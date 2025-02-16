@@ -18,6 +18,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.navigation.compose.rememberNavController
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.IS_DOWNLOADS_SCREEN_NOTIFICATION
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.OPEN_AUDIO_PLAYER
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TRACK_ID_NOTIFICATION
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TRACK_PREVIEW_URL_NOTIFICATION
 import com.spyker3d.tracksnippetplayer.navigation.AppNavHost
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,10 +48,10 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     // Если extra "openAudioPlayer" == true, открываем экран аудиоплеера
                     LaunchedEffect(Unit) {
-                        intent.extras?.takeIf { it.getBoolean("openAudioPlayer", false) }?.let {
-                            val trackId = it.getString("trackName", "")
-                            val trackPreviewUrl = it.getString("trackPreviewUrl") ?: ""
-                            val isDownloadedScreen = it.getBoolean("isDownloadedScreen")
+                        intent.extras?.takeIf { it.getBoolean(OPEN_AUDIO_PLAYER, false) }?.let {
+                            val trackId = it.getString(TRACK_ID_NOTIFICATION, "")
+                            val trackPreviewUrl = it.getString(TRACK_PREVIEW_URL_NOTIFICATION) ?: ""
+                            val isDownloadedScreen = it.getBoolean(IS_DOWNLOADS_SCREEN_NOTIFICATION)
                             navController.navigate("audioPlayer/$trackId/$trackPreviewUrl/$isDownloadedScreen")
                         }
                     }
