@@ -2,7 +2,6 @@ package com.spyker3d.tracksnippetplayer.audioplayer.presentation
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,11 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.spyker3d.tracksnippetplayer.R
-import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
-import com.spyker3d.tracksnippetplayer.apitracks.domain.usecase.SearchTrackUseCase
-import com.spyker3d.tracksnippetplayer.downloadedtracks.domain.interactor.TracksDownloadsInteractor
+import com.spyker3d.tracksnippetplayer.audioplayer.domain.interactor.GetTrackByIdUseCase
+import com.spyker3d.tracksnippetplayer.audioplayer.domain.interactor.TrackDownloadInteractor
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,8 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class AudioPlayerViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val searchTrackUseCase: SearchTrackUseCase,
-    private val tracksDownloadsInteractor: TracksDownloadsInteractor,
+    private val getTrackByIdUseCase: GetTrackByIdUseCase,
+    private val trackDownloadInteractor: TrackDownloadInteractor,
     state: SavedStateHandle,
 ) : ViewModel() {
 
@@ -49,7 +47,7 @@ class AudioPlayerViewModel @Inject constructor(
             viewModelScope.launch {
                 trackState = TrackState.Loading
                 try {
-                    val response = searchTrackUseCase.getTrackById(trackId)
+                    val response = getTrackByIdUseCase.getTrackById(trackId)
                     trackState = TrackState.Success(response)
                 } catch (e: Exception) {
                     when (e) {
@@ -67,12 +65,10 @@ class AudioPlayerViewModel @Inject constructor(
             }
         } else {
             viewModelScope.launch {
-                Log.e("TEST", "viewmodel is downloadedscreen TRUE")
                 trackState = TrackState.Loading
                 try {
-                    val localTrackInfo = tracksDownloadsInteractor.getTrackById(trackId)
+                    val localTrackInfo = trackDownloadInteractor.getTrackById(trackId)
                     trackState = TrackState.Success(localTrackInfo)
-                    Log.e("TEST", "localtrack in view model: ${localTrackInfo.name}")
                 } catch (e: Exception) {
                     when (e) {
                         is IOException -> {
@@ -81,7 +77,6 @@ class AudioPlayerViewModel @Inject constructor(
                         }
 
                         else -> {
-                            Log.e("TEST", "${e.message} and $e")
                             trackState = TrackState.Error
                             _showToast.emit(R.string.something_wrong)
                         }
@@ -141,10 +136,10 @@ class AudioPlayerViewModel @Inject constructor(
 
     fun downloadTrack(track: Track) {
         viewModelScope.launch {
-            val listOfDownloadedTracks = tracksDownloadsInteractor.getAllDownloadedTracksId()
+            val listOfDownloadedTracks = trackDownloadInteractor.getAllDownloadedTracksId()
             if (!listOfDownloadedTracks.contains(track.id)) {
                 try {
-                    tracksDownloadsInteractor.insertTrack(track = track, context = context)
+                    trackDownloadInteractor.insertTrack(track = track, context = context)
                     _showToast.emit(R.string.track_downloaded)
                 } catch (e: Exception) {
                     _showToast.emit(R.string.something_wrong)
@@ -157,10 +152,10 @@ class AudioPlayerViewModel @Inject constructor(
 
     fun deleteTrackFromDownloads(track: Track) {
         viewModelScope.launch {
-            val listOfDownloadedTracks = tracksDownloadsInteractor.getAllDownloadedTracksId()
+            val listOfDownloadedTracks = trackDownloadInteractor.getAllDownloadedTracksId()
             if (listOfDownloadedTracks.contains(track.id)) {
                 try {
-                    tracksDownloadsInteractor.deleteTrackById(
+                    trackDownloadInteractor.deleteTrackById(
                         trackId = track.id,
                         context = context,
                         fileName = track.fileNameLocal

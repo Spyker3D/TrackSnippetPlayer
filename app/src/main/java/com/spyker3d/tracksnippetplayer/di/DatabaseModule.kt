@@ -2,8 +2,8 @@ package com.spyker3d.tracksnippetplayer.di
 
 import android.content.Context
 import androidx.room.Room
-import com.spyker3d.tracksnippetplayer.downloadedtracks.data.db.AppDatabase
-import com.spyker3d.tracksnippetplayer.downloadedtracks.data.db.dao.TracksDownloadsDao
+import com.spyker3d.tracksnippetplayer.common.data.db.AppDatabase
+import com.spyker3d.tracksnippetplayer.common.data.db.dao.TracksDownloadsDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

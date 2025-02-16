@@ -47,8 +47,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.spyker3d.tracksnippetplayer.R
-import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
-import com.spyker3d.tracksnippetplayer.apitracks.presentation.LoadingScreen
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
+import com.spyker3d.tracksnippetplayer.search.presentation.LoadingScreen
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 import com.spyker3d.tracksnippetplayer.utils.makeToast
 import kotlinx.coroutines.flow.MutableSharedFlow

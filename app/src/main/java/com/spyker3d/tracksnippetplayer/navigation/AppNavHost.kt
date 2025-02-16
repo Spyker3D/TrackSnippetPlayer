@@ -35,10 +35,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.spyker3d.tracksnippetplayer.R
-import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
-import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchState
-import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackScreen
-import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackViewModel
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchState
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackScreen
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState

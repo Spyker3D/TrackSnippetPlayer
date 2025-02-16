@@ -1,7 +1,7 @@
 package com.spyker3d.tracksnippetplayer.di
 
-import com.spyker3d.tracksnippetplayer.apitracks.data.network.NetworkClient
-import com.spyker3d.tracksnippetplayer.apitracks.data.network.RetrofitNetworkClient
+import com.spyker3d.tracksnippetplayer.common.data.network.NetworkClient
+import com.spyker3d.tracksnippetplayer.common.data.network.RetrofitNetworkClient
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
