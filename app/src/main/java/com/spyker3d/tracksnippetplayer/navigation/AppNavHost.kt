@@ -56,7 +56,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             title = "Поиск",
             selectedIcon = ImageVector.vectorResource(R.drawable.ic_search_tab_selected),
             unselectedIcon = ImageVector.vectorResource(R.drawable.ic_search_tab_unselected),
-            route = ApiTracks
+            route = SearchTracks
         ),
         BottomNavigationItem(
             title = "Загрузки",
@@ -131,10 +131,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = ApiTracks,
+            startDestination = SearchTracks,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable<ApiTracks> {
+            composable<SearchTracks> {
                 val searchTrackViewModel: SearchTrackViewModel = hiltViewModel()
                 val searchState: SearchState = searchTrackViewModel.searchTrackState
 
@@ -205,7 +205,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
 }
 
 @Serializable
-object ApiTracks
+object SearchTracks
 
 @Serializable
 object DownloadedTracks

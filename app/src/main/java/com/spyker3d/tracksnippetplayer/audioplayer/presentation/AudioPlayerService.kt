@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.spyker3d.tracksnippetplayer.R
+import com.spyker3d.tracksnippetplayer.root.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -28,6 +29,8 @@ const val TRACK_URL = "TRACK_URL"
 const val TRACK_NAME = "TRACK_NAME"
 const val ARTIST_NAME = "ARTIST_NAME"
 const val SEEK_POSITION = "SEEK_POSITION"
+const val TRACK_ID = "TRACK_ID"
+const val IS_DOWNLOADS_SCREEN = "IS_DOWNLOADS_SCREEN"
 
 class AudioPlayerService : LifecycleService() {
     private lateinit var exoPlayer: ExoPlayer
@@ -36,6 +39,8 @@ class AudioPlayerService : LifecycleService() {
     private var trackName = ""
     private var artistName = ""
     private var lastTrackUrl = ""
+    private var trackId: Long = 0
+    private var isDownloadsScreen: Boolean = false
 
     override fun onCreate() {
         super.onCreate()
@@ -107,6 +112,7 @@ class AudioPlayerService : LifecycleService() {
         when (intent?.action) {
             ACTION_PREPARE -> {
                 intent.getStringExtra(TRACK_URL)?.let { trackUrl ->
+                    lastTrackUrl = trackUrl
                     val mediaItem = MediaItem.fromUri(trackUrl)
                     exoPlayer.setMediaItem(mediaItem)
 //                    exoPlayer.playWhenReady = false
@@ -114,6 +120,8 @@ class AudioPlayerService : LifecycleService() {
                 }
                 trackName = intent.getStringExtra(TRACK_NAME) ?: ""
                 artistName = intent.getStringExtra(ARTIST_NAME) ?: ""
+                trackId = intent.getLongExtra(TRACK_ID, 0)
+                isDownloadsScreen = intent.getBooleanExtra(IS_DOWNLOADS_SCREEN, false)
             }
 
             ACTION_PLAY -> {
@@ -193,10 +201,27 @@ class AudioPlayerService : LifecycleService() {
             )
         )
 
+        // Задаем contentIntent для открытия приложения при нажатии на уведомление в свернутом состоянии
+        val contentIntent = PendingIntent.getActivity(
+            this,
+            0,
+            Intent(this, MainActivity::class.java).apply {
+                action = Intent.ACTION_MAIN
+                addCategory(Intent.CATEGORY_LAUNCHER)
+                // Передаем аргументы для открытия экрана аудиоплеера
+                putExtra("openAudioPlayer", true)
+                putExtra("trackId", trackId)
+                putExtra("trackPreviewUrl", lastTrackUrl)
+                putExtra("isDownloadedScreen", isDownloadsScreen)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(trackName)
             .setContentText(artistName)
             .setSmallIcon(R.drawable.ic_music_note)
+            .setContentIntent(contentIntent)
             .addAction(rewindAction)
             .addAction(playPauseAction)
             .addAction(fastForwardAction)

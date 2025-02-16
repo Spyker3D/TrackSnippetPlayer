@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.navigation.compose.rememberNavController
 import com.spyker3d.tracksnippetplayer.navigation.AppNavHost
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,6 +41,16 @@ class MainActivity : ComponentActivity() {
 
             setContent {
                 TrackSnippetPlayerTheme {
+                    val navController = rememberNavController()
+                    // Если extra "openAudioPlayer" == true, открываем экран аудиоплеера
+                    LaunchedEffect(Unit) {
+                        intent.extras?.takeIf { it.getBoolean("openAudioPlayer", false) }?.let {
+                            val trackId = it.getString("trackName", "")
+                            val trackPreviewUrl = it.getString("trackPreviewUrl") ?: ""
+                            val isDownloadedScreen = it.getBoolean("isDownloadedScreen")
+                            navController.navigate("audioPlayer/$trackId/$trackPreviewUrl/$isDownloadedScreen")
+                        }
+                    }
                     AppNavHost()
                 }
             }

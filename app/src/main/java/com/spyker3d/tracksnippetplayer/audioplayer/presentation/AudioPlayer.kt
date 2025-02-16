@@ -66,7 +66,7 @@ fun AudioPlayerScreen(
     onPlayPause: () -> Unit,
     onFastForward: () -> Unit,
     isDownloadsScreen: Boolean,
-    prepareTrack: (String, String, String) -> Unit,
+    prepareTrack: (String, String, String, Long, Boolean) -> Unit,
     trackState: TrackState,
     showToast: SharedFlow<Int>,
     onDeleteTrack: (Track) -> Unit,
@@ -102,14 +102,22 @@ fun AudioPlayerScreen(
 
                                 if (!isDownloadsScreen) {
                                     LaunchedEffect(trackPreviewUrl) {
-                                        prepareTrack(trackPreviewUrl, track.name, track.artistName)
+                                        prepareTrack(
+                                            trackPreviewUrl,
+                                            track.name,
+                                            track.artistName,
+                                            track.id,
+                                            isDownloadsScreen
+                                        )
                                     }
                                 } else {
                                     LaunchedEffect(track.uriDownload) {
                                         prepareTrack(
                                             track.uriDownload,
                                             track.name,
-                                            track.artistName
+                                            track.artistName,
+                                            track.id,
+                                            isDownloadsScreen
                                         )
                                     }
                                 }
@@ -252,6 +260,7 @@ private fun showTrackInfo(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
+                modifier = Modifier.weight(1f),
                 text = track.name,
                 fontFamily = FontFamily(Font(R.font.roboto_regular)),
                 fontSize = 36.sp,
@@ -372,7 +381,7 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             onFastForward = {},
             onSeekTo = {},
             isDownloadsScreen = true,
-            prepareTrack = { string1, string2, string3 -> Unit },
+            prepareTrack = { string1, string2, string3, long, boolean -> Unit },
             trackState = TrackState.Success(
                 Track(
                     id = 123,

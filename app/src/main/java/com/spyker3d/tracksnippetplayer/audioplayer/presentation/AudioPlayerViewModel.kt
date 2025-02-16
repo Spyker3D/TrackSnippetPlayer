@@ -90,6 +90,7 @@ class AudioPlayerViewModel @Inject constructor(
         action: String,
         vararg extraStrings: Pair<String, String>?,
         extraLong: Pair<String, Long>? = null,
+        extraBoolean: Pair<String, Boolean>? = null
     ) {
         val intent = Intent(context, AudioPlayerService::class.java).apply {
             this.action = action
@@ -101,12 +102,21 @@ class AudioPlayerViewModel @Inject constructor(
         ContextCompat.startForegroundService(context, intent)
     }
 
-    fun prepareTrack(trackUrl: String, trackName: String, artistName: String) {
+    fun prepareTrack(
+        trackUrl: String,
+        trackName: String,
+        artistName: String,
+        trackId: Long,
+        isDownloadsScreen: Boolean
+    ) {
         sendCommandToService(
             AudioPlayerService.ACTION_PREPARE,
             TRACK_URL to trackUrl,
             TRACK_NAME to trackName,
-            ARTIST_NAME to artistName
+            ARTIST_NAME to artistName,
+            extraLong = TRACK_ID to trackId,
+            extraBoolean = IS_DOWNLOADS_SCREEN to isDownloadsScreen // для определения того, открыт экран аудиоплеера с экрана поиска или с экрана загрузок
+                                                                    // (отличается UI и функционал у экрана плеера в зависимости от того, откуда пользователь пришел)
         )
     }
 
