@@ -98,6 +98,7 @@ class AudioPlayerViewModel @Inject constructor(
                 putExtra(pair?.first, pair?.second)
             }
             extraLong?.let { putExtra(it.first, it.second) }
+            extraBoolean?.let { putExtra(it.first, it.second) }
         }
         ContextCompat.startForegroundService(context, intent)
     }
