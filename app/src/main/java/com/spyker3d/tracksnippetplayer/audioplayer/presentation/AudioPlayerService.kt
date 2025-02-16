@@ -50,6 +50,7 @@ class AudioPlayerService : LifecycleService() {
     private var isDownloadsScreen: Boolean = false
     private var playlist: List<Track> = emptyList()
     private var currentIndex: Int = 0
+    private var trackUrl = ""
 
     override fun onCreate() {
         super.onCreate()
@@ -152,6 +153,7 @@ class AudioPlayerService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
             ACTION_PREPARE -> {
+                trackUrl = intent.getStringExtra(TRACK_URL) ?: ""
                 trackName = intent.getStringExtra(TRACK_NAME) ?: ""
                 artistName = intent.getStringExtra(ARTIST_NAME) ?: ""
                 trackId = intent.getLongExtra(TRACK_ID, 0)
