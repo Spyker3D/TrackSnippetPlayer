@@ -22,7 +22,7 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 @Composable
 fun DownloadedTracksScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String, trackListsIds: List<Long>, trackListsUrls: List<String>) -> Unit,
     downloadedTracksListState: List<Track>
 ) {
     Box(
@@ -44,18 +44,19 @@ fun DownloadedTracksScreen(
                         ),
                 ) {
                     if (downloadedTracksListState.isNotEmpty()) {
+                        val trackListsIds = downloadedTracksListState.map { it.id }
+                        val trackListsUrls = downloadedTracksListState.map { it.audioPreview }
                         TrackList(
                             listOfTracks = downloadedTracksListState,
                             isDeleteIconVisible = false,
                             onDeleteItemListener = {},
                             onClickListener = { trackId, trackAudioPreview ->
-                                onNavigateToAudioPlayer(trackId, trackAudioPreview)
+                                onNavigateToAudioPlayer(trackId, trackAudioPreview, trackListsIds, trackListsUrls)
                             }
                         )
                     }
 
                 }
-
             }
         )
     }
@@ -93,7 +94,7 @@ private fun TopBar(
 fun CurrentPurchasesListScreenScaffoldPreview() {
     TrackSnippetPlayerTheme {
         DownloadedTracksScreen(
-            onNavigateToAudioPlayer = { int, string -> Unit },
+            onNavigateToAudioPlayer = { int, string, trackListIds, trackListUrls -> Unit },
             downloadedTracksListState = listOf(
                 Track(
                     id = 123,
