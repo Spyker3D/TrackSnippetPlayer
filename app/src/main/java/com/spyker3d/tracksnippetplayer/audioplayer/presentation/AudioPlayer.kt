@@ -70,7 +70,7 @@ fun AudioPlayerScreen(
     trackState: TrackState,
     showToast: SharedFlow<Int>,
     onDeleteTrack: (Track) -> Unit,
-    onDownloadTrack: (Track) -> Unit
+    onDownloadTrack: (Track) -> Unit,
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -123,7 +123,6 @@ fun AudioPlayerScreen(
                                 }
 
                                 showTrackInfo(
-                                    track = track,
                                     onDeleteListener = onDeleteTrack,
                                     onDownloadListener = onDownloadTrack,
                                     onPlayPauseListener = onPlayPause,
@@ -165,15 +164,6 @@ fun AudioPlayerScreen(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (isDownloadsScreen) {
-                                Image(
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .clickable { }, // дописать логику переключения на другой трек
-                                    painter = painterResource(id = R.drawable.png_previous_100),
-                                    contentDescription = "Rewind",
-                                )
-                            }
                             Image(
                                 modifier = Modifier
                                     .padding(16.dp)
@@ -201,18 +191,7 @@ fun AudioPlayerScreen(
                                 painter = painterResource(id = R.drawable.png_fast_forward_100),
                                 contentDescription = "FastForward",
                             )
-                            if (isDownloadsScreen) {
-                                Image(
-                                    modifier = Modifier
-                                        .padding(16.dp)
-                                        .clickable { }, // дописать логику переключения на другой трек
-                                    painter = painterResource(id = R.drawable.png_next_100),
-                                    contentDescription = "Rewind",
-                                )
-                            }
                         }
-
-
                     }
                 }
                 val context = LocalContext.current
@@ -232,13 +211,12 @@ fun AudioPlayerScreen(
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun showTrackInfo(
-    track: Track,
     onDeleteListener: (Track) -> Unit,
     onDownloadListener: (Track) -> Unit,
     onPlayPauseListener: () -> Unit,
     onBackPressedListener: () -> Unit,
     playbackState: PlaybackState,
-    isDownloadsScreen: Boolean
+    isDownloadsScreen: Boolean,
 ) {
     GlideImage(
         modifier = Modifier
@@ -246,11 +224,11 @@ private fun showTrackInfo(
             .fillMaxWidth()
             .aspectRatio(1f)
             .padding(16.dp),
-        model = track.albumImageMedium,
+        model = playbackState.albumImage,
         contentScale = ContentScale.Fit,
         loading = placeholder(R.drawable.ic_placeholder_audioplayer),
         failure = placeholder(R.drawable.ic_placeholder_audioplayer),
-        contentDescription = track.albumName
+        contentDescription = playbackState.albumName
     )
     Spacer(modifier = Modifier.padding(horizontal = 16.dp))
     Column {
@@ -261,7 +239,7 @@ private fun showTrackInfo(
         ) {
             Text(
                 modifier = Modifier.weight(1f),
-                text = track.name,
+                text = playbackState.trackName,
                 fontFamily = FontFamily(Font(R.font.roboto_regular)),
                 fontSize = 36.sp,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -270,7 +248,7 @@ private fun showTrackInfo(
             )
             Row {
                 if (!isDownloadsScreen) {
-                    IconButton(onClick = { onDownloadListener(track) }) {
+                    IconButton(onClick = { onDownloadListener(playbackState.currentTrack!!) }) {
                         Icon(
                             imageVector = Icons.Filled.Download,
                             contentDescription = "Загрузить трек"
@@ -281,7 +259,7 @@ private fun showTrackInfo(
                         if (playbackState.isPlaying) {
                             onPlayPauseListener.invoke()
                         }
-                        onDeleteListener(track)
+                        onDeleteListener(playbackState.currentTrack!!)
                         onBackPressedListener.invoke()
 
                     }) {
@@ -301,7 +279,7 @@ private fun showTrackInfo(
             Text(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
-                text = track.artistName,
+                text = playbackState.artistName,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1
             )
@@ -318,7 +296,7 @@ private fun showTrackInfo(
             Text(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface,
-                text = track.duration
+                text = playbackState.trackTime
             )
         }
         Spacer(modifier = Modifier.height(8.dp))
@@ -375,7 +353,21 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             trackId = 123,
             trackPreviewUrl = "test.ru",
             onBackPressed = {},
-            playbackState = PlaybackState(),
+            playbackState = PlaybackState(
+                currentTrack = Track(
+                    id = 123,
+                    name = "test track",
+                    artistName = "test artist",
+                    albumName = "test album",
+                    albumImageSmall = "test image small",
+                    albumImageMedium = "test image medium",
+                    albumImageBig = "test image big",
+                    link = "test lint.ru",
+                    duration = "60",
+                    audioPreview = "audio preview url",
+                    image = "image test"
+                )
+            ),
             onRewind = {},
             onPlayPause = {},
             onFastForward = {},

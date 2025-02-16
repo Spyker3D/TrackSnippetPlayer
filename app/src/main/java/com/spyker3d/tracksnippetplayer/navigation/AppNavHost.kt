@@ -139,12 +139,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 val searchState: SearchState = searchTrackViewModel.searchTrackState
 
                 SearchTrackScreen(
-                    onNavigateToAudioPlayer = { id, trackPreviewUrl ->
+                    onNavigateToAudioPlayer = { id, trackPreviewUrl, trackListIds, trackListUrls ->
                         navController.navigate(
                             route = AudioPlayer(
                                 trackId = id,
                                 trackPreviewUrl = trackPreviewUrl,
-                                isDownloadedScreen = false
+                                isDownloadedScreen = false,
+                                trackListIds = trackListIds,
+                                trackListUrls = trackListUrls
                             )
                         )
                     },
@@ -161,12 +163,14 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                         emptyList()
                     ).value
                 DownloadedTracksScreen(
-                    onNavigateToAudioPlayer = { id, trackPreviewUrl ->
+                    onNavigateToAudioPlayer = { id, trackPreviewUrl, trackListIds, trackListUrls ->
                         navController.navigate(
                             route = AudioPlayer(
                                 trackId = id,
                                 trackPreviewUrl = trackPreviewUrl,
-                                isDownloadedScreen = true
+                                isDownloadedScreen = true,
+                                trackListIds = trackListIds,
+                                trackListUrls = trackListUrls
                             )
                         )
                     },
@@ -197,7 +201,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     trackState = trackState,
                     showToast = audioPlayerViewModel.showToast,
                     onDeleteTrack = audioPlayerViewModel::deleteTrackFromDownloads,
-                    onDownloadTrack = audioPlayerViewModel::downloadTrack
+                    onDownloadTrack = audioPlayerViewModel::downloadTrack,
+
                 )
             }
         }
@@ -214,5 +219,7 @@ object DownloadedTracks
 data class AudioPlayer(
     val trackId: Long,
     val trackPreviewUrl: String,
-    val isDownloadedScreen: Boolean
+    val isDownloadedScreen: Boolean,
+    val trackListIds: List<Long>,
+    val trackListUrls: List<String>
 )

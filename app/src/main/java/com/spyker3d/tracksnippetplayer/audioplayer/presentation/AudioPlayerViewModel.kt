@@ -2,6 +2,7 @@ package com.spyker3d.tracksnippetplayer.audioplayer.presentation
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -32,6 +33,8 @@ class AudioPlayerViewModel @Inject constructor(
 
     private val trackId: Long = state.get<Long>("trackId")!!
     private val isDownloadsScreenRoute: Boolean = state.get<Boolean>("isDownloadedScreen")!!
+    private val trackListIds: List<Long> = state.get<LongArray>("trackListIds")?.toList() ?: emptyList()
+    private val trackListUrls: List<String> = state.get<Array<String>>("trackListUrls")?.toList() ?: emptyList()
 
     val playbackState: StateFlow<PlaybackState> = PlaybackStateManager.playbackStateFlow
 
@@ -40,7 +43,6 @@ class AudioPlayerViewModel @Inject constructor(
 
     private val _showToast = MutableSharedFlow<Int>()
     val showToast = _showToast.asSharedFlow()
-
 
     init {
         if (!isDownloadsScreenRoute) {

@@ -1,6 +1,10 @@
 package com.spyker3d.tracksnippetplayer.common.domain.model
 
-class Track(
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+data class Track(
     val id: Long,
     val name: String,
     val artistName: String,
@@ -14,7 +18,7 @@ class Track(
     val image: String,
     val uriDownload: String = "",
     val fileNameLocal: String = ""
-) {
+) : Parcelable {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Track) return false

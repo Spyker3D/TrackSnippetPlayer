@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @Composable
 fun SearchTrackScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String, trackListIds: List<Long>, trackListsPreview: List<String>) -> Unit,
     searchState: SearchState,
     onSearchTrack: (trackName: String) -> Unit,
     showToast: SharedFlow<Int>
@@ -69,16 +69,24 @@ fun SearchTrackScreen(
 
                         when (searchState) {
                             is SearchState.Content -> {
+                                val trackListIds = searchState.trackList.map { it.id }
+                                val trackListUrls = searchState.trackList.map { it.audioPreview }
                                 TrackList(
                                     listOfTracks = searchState.trackList,
                                     isDeleteIconVisible = false,
                                     onDeleteItemListener = {},
                                     onClickListener = { trackId, trackAudioPreview ->
-                                        onNavigateToAudioPlayer(trackId, trackAudioPreview) }
+                                        onNavigateToAudioPlayer(
+                                            trackId,
+                                            trackAudioPreview,
+                                            trackListIds,
+                                            trackListUrls
+                                        )
+                                    }
                                 )
                             }
 
-                            SearchState.Empty -> Unit // УДАЛИТЬ СОСТОЯНИЕ?
+                            SearchState.Empty -> Unit
                             SearchState.Loading -> LoadingScreen(modifier = modifier)
                             SearchState.Error -> Unit
                         }
@@ -129,7 +137,7 @@ private fun TopBar(
 fun CurrentPurchasesListScreenScaffoldPreview() {
     TrackSnippetPlayerTheme {
         SearchTrackScreen(
-            onNavigateToAudioPlayer = {int, string-> Unit },
+            onNavigateToAudioPlayer = { int, string, trackListIds, trackListUrls -> Unit },
             onSearchTrack = {},
             searchState = SearchState.Content(
                 listOf(

@@ -18,8 +18,10 @@ import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.lifecycleScope
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 import com.spyker3d.tracksnippetplayer.R
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import com.spyker3d.tracksnippetplayer.root.MainActivity
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -35,6 +37,7 @@ const val OPEN_AUDIO_PLAYER = "OPEN_AUDIO_PLAYER_NOTIFICATION"
 const val TRACK_ID_NOTIFICATION = "TRACK_ID_NOTIFICATION"
 const val TRACK_PREVIEW_URL_NOTIFICATION = "TRACK_PREVIEW_URL_NOTIFICATION"
 const val IS_DOWNLOADS_SCREEN_NOTIFICATION = "IS_DOWNLOADS_SCREEN_NOTIFICATION"
+const val TRACK_LIST = "TRACK_LIST"
 
 class AudioPlayerService : LifecycleService() {
     private lateinit var exoPlayer: ExoPlayer
@@ -45,12 +48,16 @@ class AudioPlayerService : LifecycleService() {
     private var lastTrackUrl = ""
     private var trackId: Long = 0
     private var isDownloadsScreen: Boolean = false
+    private var playlist: List<Track> = emptyList()
+    private var currentIndex: Int = 0
 
     override fun onCreate() {
         super.onCreate()
         mediaSession = MediaSessionCompat(this, "AudioPlayerService")
 
         exoPlayer = ExoPlayer.Builder(this).build()
+        exoPlayer.shuffleModeEnabled = false
+        exoPlayer.repeatMode = Player.REPEAT_MODE_OFF
 
         exoPlayer.addListener(object : Player.Listener {
             override fun onIsPlayingChanged(isPlaying: Boolean) {
@@ -60,6 +67,10 @@ class AudioPlayerService : LifecycleService() {
             override fun onPlaybackStateChanged(state: Int) {
                 updatePlaybackState()
                 updateNotification()
+            }
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+                currentIndex = exoPlayer.currentMediaItemIndex
+                updateTrackInfoFromPlaylist()
             }
         })
 
@@ -78,6 +89,19 @@ class AudioPlayerService : LifecycleService() {
             )
             val manager = getSystemService(NotificationManager::class.java)
             manager.createNotificationChannel(channel)
+        }
+    }
+
+    /**
+     * Обновляение информации о текущем треке из плейлиста.
+     * Если плейлист не пустой и текущий индекс корректен, берётся название трека и имя исполнителя.
+     */
+    private fun updateTrackInfoFromPlaylist() {
+        if (playlist.isNotEmpty() && currentIndex in playlist.indices) {
+            val currentTrack = playlist[currentIndex]
+            trackName = currentTrack.name
+            artistName = currentTrack.artistName
+            updateNotification()
         }
     }
 
@@ -102,12 +126,25 @@ class AudioPlayerService : LifecycleService() {
     }
 
     private fun updatePlaybackState() {
-        val state = PlaybackState(
-            isPlaying = exoPlayer.isPlaying,
-            currentPosition = exoPlayer.currentPosition,
-            duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L
-        )
-        PlaybackStateManager.updateState(state)
+        if (playlist.isNotEmpty() && currentIndex in playlist.indices) {
+            val currentTrack = playlist[currentIndex]
+            trackName = currentTrack.name
+            artistName = currentTrack.artistName
+            PlaybackStateManager.updateState(
+                PlaybackState(
+                    isPlaying = exoPlayer.isPlaying,
+                    currentPosition = exoPlayer.currentPosition,
+                    duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L,
+                    trackName = trackName,
+                    artistName = currentTrack.artistName,
+                    trackIndex = currentIndex,
+                    albumImage = currentTrack.albumImageMedium,
+                    trackTime = currentTrack.duration,
+                    albumName = currentTrack.albumName,
+                    currentTrack = currentTrack
+                )
+            )
+        }
     }
 
 
@@ -115,17 +152,38 @@ class AudioPlayerService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
             ACTION_PREPARE -> {
-                intent.getStringExtra(TRACK_URL)?.let { trackUrl ->
-                    lastTrackUrl = trackUrl
-                    val mediaItem = MediaItem.fromUri(trackUrl)
-                    exoPlayer.setMediaItem(mediaItem)
-//                    exoPlayer.playWhenReady = false
-                    exoPlayer.prepare()
-                }
                 trackName = intent.getStringExtra(TRACK_NAME) ?: ""
                 artistName = intent.getStringExtra(ARTIST_NAME) ?: ""
                 trackId = intent.getLongExtra(TRACK_ID, 0)
                 isDownloadsScreen = intent.getBooleanExtra(IS_DOWNLOADS_SCREEN, false)
+
+                if (!trackName.isNullOrEmpty() && playlist.isNotEmpty()) {
+                    exoPlayer.seekTo(playlist.indexOfFirst { it.name == trackName }, 0L)
+                }
+            }
+
+            ACTION_PREPARE_PLAYLIST -> {
+                exoPlayer.playWhenReady = false
+                playlist = intent.getParcelableArrayListExtra<Track>(TRACK_LIST) ?: emptyList()
+                if (playlist.isNotEmpty()) {
+                    currentIndex = 0
+                    // Обновляется уведомление для первого трека
+                    updateTrackInfoFromPlaylist()
+                    // Формируется список MediaItem и устанавливаем их в плеер
+                    val mediaItems = playlist.map { track ->
+                        MediaItem.Builder()
+                            .setUri(track.audioPreview) // или другой URL, по которому воспроизводится трек
+                            .setMediaMetadata(
+                                MediaMetadata.Builder()
+                                    .setTitle(track.name)
+                                    .setArtist(track.artistName)
+                                    .build()
+                            )
+                            .build()
+                    }
+                    exoPlayer.setMediaItems(mediaItems)
+                    exoPlayer.prepare()
+                }
             }
 
             ACTION_PLAY -> {
@@ -251,6 +309,8 @@ class AudioPlayerService : LifecycleService() {
     companion object {
         const val ACTION_PREPARE =
             "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_PREPARE"
+        const val ACTION_PREPARE_PLAYLIST =
+            "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_PREPARE_PLAYLIST"
         const val ACTION_PLAY =
             "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_PLAY"
         const val ACTION_PAUSE =
