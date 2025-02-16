@@ -70,6 +70,6 @@ class SearchTrackViewModel @Inject constructor(
     }
 
     companion object {
-        const val INPUT_TRACK_SEARCH_DELAY = 1000L
+        const val INPUT_TRACK_SEARCH_DELAY = 2000L
     }
 }
