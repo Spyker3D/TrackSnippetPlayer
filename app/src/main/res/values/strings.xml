@@ -4,4 +4,8 @@
     <string name="error_connection">Ошибка соединения</string>
     <string name="something_wrong">Что-то пошло не так</string>
     <string name="search_hint">Поиск по исполнителю, треку, альбому</string>
+    <string name="track_deletion_error">Трека нет среди загруженных</string>
+    <string name="track_was_deleted">Трек был удален из списка загруженных</string>
+    <string name="track_downloaded">Трек успешно загружен</string>
+    <string name="track_download_error">Трек уже есть в списке загруженных</string>
 </resources>

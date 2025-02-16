@@ -35,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.spyker3d.tracksnippetplayer.R
+import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchState
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackScreen
 import com.spyker3d.tracksnippetplayer.apitracks.presentation.SearchTrackViewModel
@@ -43,6 +44,7 @@ import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewM
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TrackState
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
+import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksViewModel
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
 import kotlinx.serialization.Serializable
 
@@ -51,13 +53,13 @@ import kotlinx.serialization.Serializable
 fun AppNavHost(navController: NavHostController = rememberNavController()) {
     val items = listOf(
         BottomNavigationItem(
-            title = "Search",
+            title = "Поиск",
             selectedIcon = ImageVector.vectorResource(R.drawable.ic_search_tab_selected),
             unselectedIcon = ImageVector.vectorResource(R.drawable.ic_search_tab_unselected),
             route = ApiTracks
         ),
         BottomNavigationItem(
-            title = "Downloads",
+            title = "Загрузки",
             selectedIcon = ImageVector.vectorResource(R.drawable.ic_downloaded_tracks_tab_selected),
             unselectedIcon = ImageVector.vectorResource(R.drawable.ic_downloaded_tracks_tab_unselected),
             route = DownloadedTracks
@@ -153,15 +155,23 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             }
 
             composable<DownloadedTracks> {
-                DownloadedTracksScreen(onNavigateToAudioPlayer = { id, trackPreviewUrl ->
-                    navController.navigate(
-                        route = AudioPlayer(
-                            trackId = id,
-                            trackPreviewUrl = trackPreviewUrl,
-                            isDownloadedScreen = true
+                val downloadedTracksViewModel: DownloadedTracksViewModel = hiltViewModel()
+                val listOfDownloadedTracks: List<Track> =
+                    downloadedTracksViewModel.downloadedTracksList.collectAsState(
+                        emptyList()
+                    ).value
+                DownloadedTracksScreen(
+                    onNavigateToAudioPlayer = { id, trackPreviewUrl ->
+                        navController.navigate(
+                            route = AudioPlayer(
+                                trackId = id,
+                                trackPreviewUrl = trackPreviewUrl,
+                                isDownloadedScreen = true
+                            )
                         )
-                    )
-                })
+                    },
+                    downloadedTracksListState = listOfDownloadedTracks
+                )
             }
 
             composable<AudioPlayer> {
@@ -169,9 +179,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 val isDownloadedScreen = args.isDownloadedScreen
 
                 val audioPlayerViewModel: AudioPlayerViewModel = hiltViewModel()
-                val audioPlayerState: State<PlaybackState> = audioPlayerViewModel.playbackState.collectAsState()
+                val audioPlayerState: State<PlaybackState> =
+                    audioPlayerViewModel.playbackState.collectAsState()
                 val trackState: TrackState = audioPlayerViewModel.trackState
-
 
                 AudioPlayerScreen(
                     trackId = args.trackId,
@@ -185,7 +195,9 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     isDownloadsScreen = isDownloadedScreen,
                     prepareTrack = audioPlayerViewModel::prepareTrack,
                     trackState = trackState,
-                    showToast = audioPlayerViewModel.showToast
+                    showToast = audioPlayerViewModel.showToast,
+                    onDeleteTrack = audioPlayerViewModel::deleteTrackFromDownloads,
+                    onDownloadTrack = audioPlayerViewModel::downloadTrack
                 )
             }
         }

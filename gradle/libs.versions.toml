@@ -16,6 +16,7 @@ activityCompose = "1.10.0"
 composeBom = "2024.04.01"
 lifecycleService = "2.8.7"
 loggingInterceptor = "4.12.0"
+materialIconsExtended = "1.7.8"
 navigationCompose = "2.8.4"
 kotlinxSerializationJson = "1.6.3"
 retrofit = "2.11.0"
@@ -46,6 +47,7 @@ detektCompose = "0.4.16"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-foundation = { module = "androidx.compose.foundation:foundation" }
 androidx-lifecycle-service = { module = "androidx.lifecycle:lifecycle-service", version.ref = "lifecycleService" }
+androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
 compose = { module = "com.github.bumptech.glide:compose", version.ref = "compose" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }

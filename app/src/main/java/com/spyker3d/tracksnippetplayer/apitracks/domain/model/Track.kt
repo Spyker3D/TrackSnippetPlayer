@@ -12,6 +12,8 @@ class Track(
     val duration: String,
     val audioPreview: String,
     val image: String,
+    val uriDownload: String = "",
+    val fileNameLocal: String = ""
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
