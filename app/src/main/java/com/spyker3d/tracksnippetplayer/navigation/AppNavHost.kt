@@ -98,7 +98,6 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                                         saveState = true
                                     }
                                     launchSingleTop = true
-                                    restoreState = true
                                 }
                             },
                             label = {
