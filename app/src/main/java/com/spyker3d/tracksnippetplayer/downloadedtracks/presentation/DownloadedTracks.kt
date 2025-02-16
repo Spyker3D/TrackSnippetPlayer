@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
-import com.spyker3d.tracksnippetplayer.apitracks.presentation.TrackList
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
+import com.spyker3d.tracksnippetplayer.search.presentation.TrackList
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 
 @Composable

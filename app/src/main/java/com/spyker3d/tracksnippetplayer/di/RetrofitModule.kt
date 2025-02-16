@@ -1,6 +1,6 @@
 package com.spyker3d.tracksnippetplayer.di
 
-import com.spyker3d.tracksnippetplayer.apitracks.data.network.DeezerApiService
+import com.spyker3d.tracksnippetplayer.common.data.network.DeezerApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

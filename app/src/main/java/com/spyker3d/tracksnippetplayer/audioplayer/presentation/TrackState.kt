@@ -1,6 +1,6 @@
 package com.spyker3d.tracksnippetplayer.audioplayer.presentation
 
-import com.spyker3d.tracksnippetplayer.apitracks.domain.model.Track
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 
 sealed interface TrackState {
     object Idle : TrackState
