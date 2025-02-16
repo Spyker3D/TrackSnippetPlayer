@@ -30,7 +30,7 @@ class AudioPlayerViewModel @Inject constructor(
     state: SavedStateHandle,
 ) : ViewModel() {
 
-    private val trackId: Int = state.get<Int>("trackId")!!
+    private val trackId: Long = state.get<Long>("trackId")!!
     private val isDownloadsScreenRoute: Boolean = state.get<Boolean>("isDownloadedScreen")!!
 
     val playbackState: StateFlow<PlaybackState> = PlaybackStateManager.playbackStateFlow
@@ -104,9 +104,9 @@ class AudioPlayerViewModel @Inject constructor(
     fun prepareTrack(trackUrl: String, trackName: String, artistName: String) {
         sendCommandToService(
             AudioPlayerService.ACTION_PREPARE,
-            "TRACK_URL" to trackUrl,
-            "TRACK_NAME" to trackName,
-            "ARTIST_NAME" to artistName
+            TRACK_URL to trackUrl,
+            TRACK_NAME to trackName,
+            ARTIST_NAME to artistName
         )
     }
 
@@ -130,7 +130,7 @@ class AudioPlayerViewModel @Inject constructor(
     fun seekTo(position: Long) {
         sendCommandToService(
             AudioPlayerService.ACTION_SEEK_TO,
-            extraLong = "SEEK_POSITION" to position
+            extraLong = SEEK_POSITION to position
         )
     }
 

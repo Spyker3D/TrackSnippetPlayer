@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 class TrackDto(
     @SerializedName("id")
-    val id: Int,
+    val id: Long,
     @SerializedName("title")
     val name: String,
     @SerializedName("link")

@@ -10,7 +10,7 @@ class TrackEntity(
     @ColumnInfo(name = "local_id")
     val localId: Int = 0,
     @ColumnInfo(name = "remote_id")
-    val remoteId: Int,
+    val remoteId: Long,
     @ColumnInfo(name = "name")
     val name: String,
     @ColumnInfo(name = "artist_name")

@@ -48,16 +48,16 @@ class TrackDownloadRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getAllDownloadedTracksId(): List<Int> {
+    override suspend fun getAllDownloadedTracksId(): List<Long> {
         return appDatabase.trackDownloadsDao().getAllDownloadedTracksId()
     }
 
-    override suspend fun getTrackById(trackId: Int): Track {
+    override suspend fun getTrackById(trackId: Long): Track {
         val localTrack = appDatabase.trackDownloadsDao().getTrackById(trackId)
         return localTrack.mapToDomain()
     }
 
-    override suspend fun deleteTrackById(trackId: Int, context: Context, fileName: String) {
+    override suspend fun deleteTrackById(trackId: Long, context: Context, fileName: String) {
         appDatabase.trackDownloadsDao().deleteTrackById(trackId)
         coroutineScope {
             launch {

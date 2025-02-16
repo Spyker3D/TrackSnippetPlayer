@@ -12,12 +12,12 @@ class TrackDownloadInteractor @Inject constructor(
         trackDownloadRepository.insertTrack(track = track, context = context)
     }
 
-    suspend fun getAllDownloadedTracksId(): List<Int> =
+    suspend fun getAllDownloadedTracksId(): List<Long> =
         trackDownloadRepository.getAllDownloadedTracksId()
 
-    suspend fun getTrackById(trackId: Int): Track = trackDownloadRepository.getTrackById(trackId)
+    suspend fun getTrackById(trackId: Long): Track = trackDownloadRepository.getTrackById(trackId)
 
-    suspend fun deleteTrackById(trackId: Int, context: Context, fileName: String) {
+    suspend fun deleteTrackById(trackId: Long, context: Context, fileName: String) {
         trackDownloadRepository.deleteTrackById(
             trackId = trackId,
             context = context,

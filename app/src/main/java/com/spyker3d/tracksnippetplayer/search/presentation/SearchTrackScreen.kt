@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @Composable
 fun SearchTrackScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Int, trackPreviewUrl: String) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String) -> Unit,
     searchState: SearchState,
     onSearchTrack: (trackName: String) -> Unit,
     showToast: SharedFlow<Int>
@@ -79,7 +79,7 @@ fun SearchTrackScreen(
                             }
 
                             SearchState.Empty -> Unit // УДАЛИТЬ СОСТОЯНИЕ?
-                            SearchState.Loading -> LoadingScreen()
+                            SearchState.Loading -> LoadingScreen(modifier = modifier)
                             SearchState.Error -> Unit
                         }
 

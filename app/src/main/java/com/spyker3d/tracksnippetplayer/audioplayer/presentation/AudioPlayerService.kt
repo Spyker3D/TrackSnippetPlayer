@@ -24,6 +24,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
+const val TRACK_URL = "TRACK_URL"
+const val TRACK_NAME = "TRACK_NAME"
+const val ARTIST_NAME = "ARTIST_NAME"
+const val SEEK_POSITION = "SEEK_POSITION"
+
 class AudioPlayerService : LifecycleService() {
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSessionCompat
@@ -101,14 +106,14 @@ class AudioPlayerService : LifecycleService() {
         super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
             ACTION_PREPARE -> {
-                intent.getStringExtra("TRACK_URL")?.let { trackUrl ->
+                intent.getStringExtra(TRACK_URL)?.let { trackUrl ->
                     val mediaItem = MediaItem.fromUri(trackUrl)
                     exoPlayer.setMediaItem(mediaItem)
 //                    exoPlayer.playWhenReady = false
                     exoPlayer.prepare()
                 }
-                trackName = intent.getStringExtra("TRACK_NAME") ?: ""
-                artistName = intent.getStringExtra("ARTIST_NAME") ?: ""
+                trackName = intent.getStringExtra(TRACK_NAME) ?: ""
+                artistName = intent.getStringExtra(ARTIST_NAME) ?: ""
             }
 
             ACTION_PLAY -> {
@@ -133,7 +138,7 @@ class AudioPlayerService : LifecycleService() {
             }
 
             ACTION_SEEK_TO -> {
-                val position = intent.getLongExtra("SEEK_POSITION", 0L)
+                val position = intent.getLongExtra(SEEK_POSITION, 0L)
                 exoPlayer.seekTo(position)
             }
         }

@@ -6,9 +6,9 @@ import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 interface TrackDownloadRepository {
     suspend fun insertTrack(track: Track, context: Context)
 
-    suspend fun getAllDownloadedTracksId(): List<Int>
+    suspend fun getAllDownloadedTracksId(): List<Long>
 
-    suspend fun getTrackById(trackId: Int): Track
+    suspend fun getTrackById(trackId: Long): Track
 
-    suspend fun deleteTrackById(trackId: Int, context: Context, fileName: String)
+    suspend fun deleteTrackById(trackId: Long, context: Context, fileName: String)
 }

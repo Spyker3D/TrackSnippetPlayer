@@ -7,5 +7,5 @@ interface NetworkClient {
 
     suspend fun searchTrackByName(trackName: String): TracksSearchResponse
 
-    suspend fun searchTrackById(trackId: Int): TrackDto
+    suspend fun searchTrackById(trackId: Long): TrackDto
 }

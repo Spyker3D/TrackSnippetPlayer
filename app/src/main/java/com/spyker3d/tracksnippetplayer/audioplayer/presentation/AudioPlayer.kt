@@ -57,7 +57,7 @@ import kotlinx.coroutines.flow.SharedFlow
 @Composable
 fun AudioPlayerScreen(
     modifier: Modifier = Modifier,
-    trackId: Int,
+    trackId: Long,
     trackPreviewUrl: String,
     onBackPressed: () -> Unit,
     playbackState: PlaybackState,
@@ -120,11 +120,12 @@ fun AudioPlayerScreen(
                                     onDownloadListener = onDownloadTrack,
                                     onPlayPauseListener = onPlayPause,
                                     onBackPressedListener = onBackPressed,
-                                    playbackState = playbackState
+                                    playbackState = playbackState,
+                                    isDownloadsScreen = isDownloadsScreen
                                 )
                             }
 
-                            TrackState.Loading -> LoadingScreen()
+                            TrackState.Loading -> LoadingScreen(modifier = modifier)
                             TrackState.Error -> Unit
                             TrackState.Idle -> Unit
                         }
@@ -228,7 +229,8 @@ private fun showTrackInfo(
     onDownloadListener: (Track) -> Unit,
     onPlayPauseListener: () -> Unit,
     onBackPressedListener: () -> Unit,
-    playbackState: PlaybackState
+    playbackState: PlaybackState,
+    isDownloadsScreen: Boolean
 ) {
     GlideImage(
         modifier = Modifier
@@ -258,25 +260,27 @@ private fun showTrackInfo(
                 overflow = TextOverflow.Ellipsis
             )
             Row {
-                IconButton(onClick = { onDownloadListener(track) }) {
-                    Icon(
-                        imageVector = Icons.Filled.Download,
-                        contentDescription = "Загрузить трек"
-                    )
-                }
-                Spacer(modifier = Modifier.padding(horizontal = 16.dp))
-                IconButton(onClick = {
-                    if (playbackState.isPlaying) {
-                        onPlayPauseListener.invoke()
+                if (!isDownloadsScreen) {
+                    IconButton(onClick = { onDownloadListener(track) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Download,
+                            contentDescription = "Загрузить трек"
+                        )
                     }
-                    onDeleteListener(track)
-                    onBackPressedListener.invoke()
+                } else {
+                    IconButton(onClick = {
+                        if (playbackState.isPlaying) {
+                            onPlayPauseListener.invoke()
+                        }
+                        onDeleteListener(track)
+                        onBackPressedListener.invoke()
 
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Удалить трек из загрузок"
-                    )
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Удалить трек из загрузок"
+                        )
+                    }
                 }
             }
         }

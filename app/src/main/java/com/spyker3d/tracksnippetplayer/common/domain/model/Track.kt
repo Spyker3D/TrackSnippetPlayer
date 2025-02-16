@@ -1,7 +1,7 @@
 package com.spyker3d.tracksnippetplayer.common.domain.model
 
 class Track(
-    val id: Int,
+    val id: Long,
     val name: String,
     val artistName: String,
     val albumName: String,

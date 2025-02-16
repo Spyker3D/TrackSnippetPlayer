@@ -1,5 +1,6 @@
 package com.spyker3d.tracksnippetplayer.search.presentation
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -54,6 +55,7 @@ class SearchTrackViewModel @Inject constructor(
                     _showToast.emit(R.string.error_nothing_found)
                 }
             } catch (e: Exception) {
+                Log.e("TEST", "Error in view model: ${e.message} and $e")
                 when (e) {
                     is IOException -> {
                         searchTrackState = SearchState.Error

@@ -12,7 +12,7 @@ class RetrofitNetworkClient @Inject constructor(
         return deezerApiService.searchTrack(trackName)
     }
 
-    override suspend fun searchTrackById(trackId: Int): TrackDto {
+    override suspend fun searchTrackById(trackId: Long): TrackDto {
         return deezerApiService.getTrackById(trackId)
     }
 }

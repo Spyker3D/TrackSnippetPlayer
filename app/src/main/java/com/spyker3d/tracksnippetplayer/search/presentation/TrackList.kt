@@ -46,8 +46,8 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 fun TrackList(
     listOfTracks: List<Track>,
     isDeleteIconVisible: Boolean,
-    onDeleteItemListener: (Int) -> Unit,
-    onClickListener: (Int, String) -> Unit,
+    onDeleteItemListener: (Long) -> Unit,
+    onClickListener: (Long, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

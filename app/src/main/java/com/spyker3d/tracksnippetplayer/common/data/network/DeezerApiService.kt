@@ -11,5 +11,5 @@ interface DeezerApiService {
     suspend fun searchTrack(@Query("q") text: String): TracksSearchResponse
 
     @GET("track/{id}")
-    suspend fun getTrackById(@Path("id") id: Int): TrackDto
+    suspend fun getTrackById(@Path("id") id: Long): TrackDto
 }

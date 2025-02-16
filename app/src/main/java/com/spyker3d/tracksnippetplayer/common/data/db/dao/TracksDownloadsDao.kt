@@ -21,13 +21,13 @@ interface TracksDownloadsDao {
     fun getAllDownloadedTracks(): Flow<List<TrackEntity>>
 
     @Query("SELECT remote_id FROM tracks_downloads_table")
-    suspend fun getAllDownloadedTracksId(): List<Int>
+    suspend fun getAllDownloadedTracksId(): List<Long>
 
     @Transaction
     @Query("SELECT * FROM tracks_downloads_table WHERE remote_id = :trackId")
-    suspend fun getTrackById(trackId: Int): TrackEntity
+    suspend fun getTrackById(trackId: Long): TrackEntity
 
     @Transaction
     @Query("DELETE FROM tracks_downloads_table WHERE remote_id = :trackId")
-    suspend fun deleteTrackById(trackId: Int)
+    suspend fun deleteTrackById(trackId: Long)
 }

@@ -14,9 +14,11 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 
 
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(
+    modifier: Modifier
+) {
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         CircularProgressIndicator(
@@ -31,6 +33,6 @@ fun LoadingScreen() {
 @Composable
 private fun PreviewLoadingScreen() {
     TrackSnippetPlayerTheme {
-        LoadingScreen()
+        LoadingScreen(modifier = Modifier)
     }
 }

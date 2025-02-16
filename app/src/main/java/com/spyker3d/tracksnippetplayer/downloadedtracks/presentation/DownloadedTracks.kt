@@ -22,7 +22,7 @@ import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 @Composable
 fun DownloadedTracksScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAudioPlayer: (trackId: Int, trackPreviewUrl: String) -> Unit,
+    onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String) -> Unit,
     downloadedTracksListState: List<Track>
 ) {
     Box(

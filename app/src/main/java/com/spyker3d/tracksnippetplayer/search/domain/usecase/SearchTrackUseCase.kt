@@ -8,6 +8,4 @@ class SearchTrackUseCase @Inject constructor(private val trackSearchRepository: 
 
     suspend fun searchTrack(trackName: String): List<Track> =
         trackSearchRepository.searchTrack(trackName)
-
-    suspend fun getTrackById(trackId: Int): Track = trackSearchRepository.getTrackById(trackId)
 }

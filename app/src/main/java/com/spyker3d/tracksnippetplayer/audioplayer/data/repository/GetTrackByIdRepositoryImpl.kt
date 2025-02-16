@@ -7,7 +7,7 @@ import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import javax.inject.Inject
 
 class GetTrackByIdRepositoryImpl @Inject constructor(private val networkClient: NetworkClient) : GetTrackByIdRepository {
-    override suspend fun getTrackById(trackId: Int): Track {
+    override suspend fun getTrackById(trackId: Long): Track {
         return networkClient.searchTrackById(trackId).mapToDomain()
     }
 }

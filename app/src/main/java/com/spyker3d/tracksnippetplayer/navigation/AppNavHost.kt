@@ -212,7 +212,7 @@ object DownloadedTracks
 
 @Serializable
 data class AudioPlayer(
-    val trackId: Int,
+    val trackId: Long,
     val trackPreviewUrl: String,
     val isDownloadedScreen: Boolean
 )
