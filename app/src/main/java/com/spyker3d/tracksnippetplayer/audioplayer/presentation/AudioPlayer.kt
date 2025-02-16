@@ -66,12 +66,29 @@ fun AudioPlayerScreen(
     onPlayPause: () -> Unit,
     onFastForward: () -> Unit,
     isDownloadsScreen: Boolean,
-    prepareTrack: (String, String, String, Long, Boolean) -> Unit,
+    setPendingTrack: (String, String, String, Long, Boolean) -> Unit,
     trackState: TrackState,
     showToast: SharedFlow<Int>,
     onDeleteTrack: (Track) -> Unit,
-    onDownloadTrack: (Track) -> Unit
+    onDownloadTrack: (Track) -> Unit,
+    pendingTrack: PendingTrack?
 ) {
+    // Если pendingTrack != null, значит новый трек ещё не запущен – UI должен показывать начальное состояние:
+    val effectivePlaybackState = if (pendingTrack != null) {
+        // если трек тот же самый, то показываем текущее состояние (если вышли на экран списка и зашли обратно в аудиоплеер)
+        if (playbackState.trackId == trackId) {
+            playbackState
+        } else {
+            PlaybackState(
+                isPlaying = false,
+                currentPosition = 0L,
+                duration = playbackState.duration
+            )
+        }
+    } else {
+        playbackState
+    }
+
     Box(
         modifier = modifier.fillMaxSize(),
     ) {
@@ -102,7 +119,7 @@ fun AudioPlayerScreen(
 
                                 if (!isDownloadsScreen) {
                                     LaunchedEffect(trackPreviewUrl) {
-                                        prepareTrack(
+                                        setPendingTrack(
                                             trackPreviewUrl,
                                             track.name,
                                             track.artistName,
@@ -112,7 +129,7 @@ fun AudioPlayerScreen(
                                     }
                                 } else {
                                     LaunchedEffect(track.uriDownload) {
-                                        prepareTrack(
+                                        setPendingTrack(
                                             track.uriDownload,
                                             track.name,
                                             track.artistName,
@@ -121,7 +138,6 @@ fun AudioPlayerScreen(
                                         )
                                     }
                                 }
-
                                 showTrackInfo(
                                     track = track,
                                     onDeleteListener = onDeleteTrack,
@@ -137,22 +153,42 @@ fun AudioPlayerScreen(
                             TrackState.Error -> Unit
                             TrackState.Idle -> Unit
                         }
+
+                        val sliderEnabled = if (playbackState.trackId == trackId) {
+                            true
+                        } else {
+                            pendingTrack == null
+                        }
+
                         Slider(
-                            value = if (playbackState.duration > 0)
-                                playbackState.currentPosition.toFloat() / playbackState.duration.toFloat()
-                            else 0f,
+                            value = if (effectivePlaybackState.duration > 0) {
+                                effectivePlaybackState.currentPosition.toFloat() / effectivePlaybackState.duration.toFloat()
+                            } else {
+                                0f
+                            },
                             onValueChange = { fraction ->
-                                val newPosition = (fraction * playbackState.duration).toLong()
+                                val newPosition =
+                                    (fraction * effectivePlaybackState.duration).toLong()
                                 onSeekTo(newPosition)
                             },
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth(),
+                            enabled = sliderEnabled,
                         )
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
+                            val currentPosition = if (pendingTrack != null) {
+                                if (playbackState.trackId == trackId) {
+                                    playbackState.currentPosition
+                                } else {
+                                    0L
+                                }
+                            } else {
+                                playbackState.currentPosition
+                            }
                             Text(
-                                text = formatTime(playbackState.currentPosition),
+                                text = formatTime(currentPosition),
                                 style = MaterialTheme.typography.bodySmall
                             )
                             Text(
@@ -187,7 +223,7 @@ fun AudioPlayerScreen(
                                     .clickable {
                                         onPlayPause.invoke()
                                     },
-                                painter = if (playbackState.isPlaying) {
+                                painter = if (effectivePlaybackState.isPlaying) {
                                     painterResource(id = R.drawable.png_pause_100)
                                 } else {
                                     painterResource(id = R.drawable.png_play_100)
@@ -381,7 +417,7 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             onFastForward = {},
             onSeekTo = {},
             isDownloadsScreen = true,
-            prepareTrack = { string1, string2, string3, long, boolean -> Unit },
+            setPendingTrack = { string1, string2, string3, long, boolean -> Unit },
             trackState = TrackState.Success(
                 Track(
                     id = 123,
@@ -400,6 +436,7 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             showToast = MutableSharedFlow<Int>(),
             onDeleteTrack = { },
             onDownloadTrack = { },
+            pendingTrack = null
         )
     }
 }

@@ -41,6 +41,7 @@ import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackScreen
 import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewModel
+import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PendingTrack
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TrackState
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
@@ -183,6 +184,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     audioPlayerViewModel.playbackState.collectAsState()
                 val trackState: TrackState = audioPlayerViewModel.trackState
 
+                val pendingTrack: PendingTrack? = audioPlayerViewModel.pendingTrack.collectAsState().value
+
                 AudioPlayerScreen(
                     trackId = args.trackId,
                     trackPreviewUrl = args.trackPreviewUrl,
@@ -193,11 +196,12 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onFastForward = audioPlayerViewModel::fastForward,
                     onSeekTo = audioPlayerViewModel::seekTo,
                     isDownloadsScreen = isDownloadedScreen,
-                    prepareTrack = audioPlayerViewModel::prepareTrack,
+                    setPendingTrack = audioPlayerViewModel::setPendingTrack,
                     trackState = trackState,
                     showToast = audioPlayerViewModel.showToast,
                     onDeleteTrack = audioPlayerViewModel::deleteTrackFromDownloads,
-                    onDownloadTrack = audioPlayerViewModel::downloadTrack
+                    onDownloadTrack = audioPlayerViewModel::downloadTrack,
+                    pendingTrack = pendingTrack
                 )
             }
         }

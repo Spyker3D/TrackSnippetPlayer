@@ -16,8 +16,10 @@ import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -41,6 +43,8 @@ class AudioPlayerViewModel @Inject constructor(
     private val _showToast = MutableSharedFlow<Int>()
     val showToast = _showToast.asSharedFlow()
 
+    private val _pendingTrack = MutableStateFlow<PendingTrack?>(null)
+    val pendingTrack: StateFlow<PendingTrack?> = _pendingTrack.asStateFlow()
 
     init {
         if (!isDownloadsScreenRoute) {
@@ -122,12 +126,30 @@ class AudioPlayerViewModel @Inject constructor(
     }
 
     fun playPause() {
-        val action = if (playbackState.value.isPlaying) {
-            AudioPlayerService.ACTION_PAUSE
+        // Если есть новый (pending) трек, то сначала подготовить его, затем запустить воспроизведение
+        val pending = _pendingTrack.value
+        if (pending != null) {
+            // Отправляется команда подготовки нового трека
+            sendCommandToService(
+                AudioPlayerService.ACTION_PREPARE,
+                TRACK_URL to pending.trackUrl,
+                TRACK_NAME to pending.trackName,
+                ARTIST_NAME to pending.artistName,
+                extraLong = TRACK_ID to pending.trackId,
+                extraBoolean = IS_DOWNLOADS_SCREEN to pending.isDownloadsScreen
+            )
+            // Очищается pending, чтобы знать, что новый трек применён
+            _pendingTrack.value = null
+            // После этого запускается воспроизведение нового трека
+            sendCommandToService(AudioPlayerService.ACTION_PLAY)
         } else {
-            AudioPlayerService.ACTION_PLAY
+            val action = if (playbackState.value.isPlaying) {
+                AudioPlayerService.ACTION_PAUSE
+            } else {
+                AudioPlayerService.ACTION_PLAY
+            }
+            sendCommandToService(action)
         }
-        sendCommandToService(action)
     }
 
     fun rewind() {
@@ -179,5 +201,16 @@ class AudioPlayerViewModel @Inject constructor(
                 _showToast.emit(R.string.track_deletion_error)
             }
         }
+    }
+
+    // При навигации установите pendingTrack вместо немедленного вызова prepareTrack
+    fun setPendingTrack(
+        trackUrl: String,
+        trackName: String,
+        artistName: String,
+        trackId: Long,
+        isDownloadsScreen: Boolean
+    ) {
+        _pendingTrack.value = PendingTrack(trackUrl, trackName, artistName, trackId, isDownloadsScreen)
     }
 }

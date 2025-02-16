@@ -105,7 +105,8 @@ class AudioPlayerService : LifecycleService() {
         val state = PlaybackState(
             isPlaying = exoPlayer.isPlaying,
             currentPosition = exoPlayer.currentPosition,
-            duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L
+            duration = if (exoPlayer.duration > 0) exoPlayer.duration else 0L,
+            trackId = trackId
         )
         PlaybackStateManager.updateState(state)
     }
