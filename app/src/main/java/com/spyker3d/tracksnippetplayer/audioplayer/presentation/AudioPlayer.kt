@@ -71,6 +71,8 @@ fun AudioPlayerScreen(
     showToast: SharedFlow<Int>,
     onDeleteTrack: (Track) -> Unit,
     onDownloadTrack: (Track) -> Unit,
+    onNextTrack: () -> Unit,
+    onPreviousTrack: () -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -167,6 +169,13 @@ fun AudioPlayerScreen(
                             Image(
                                 modifier = Modifier
                                     .padding(16.dp)
+                                    .clickable { onPreviousTrack.invoke() },
+                                painter = painterResource(id = R.drawable.png_previous_100),
+                                contentDescription = "Previous track",
+                            )
+                            Image(
+                                modifier = Modifier
+                                    .padding(16.dp)
                                     .clickable { onRewind.invoke() },
                                 painter = painterResource(id = R.drawable.png_rewind_100),
                                 contentDescription = "Rewind",
@@ -190,6 +199,13 @@ fun AudioPlayerScreen(
                                     .clickable { onFastForward.invoke() },
                                 painter = painterResource(id = R.drawable.png_fast_forward_100),
                                 contentDescription = "FastForward",
+                            )
+                            Image(
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .clickable { onNextTrack.invoke() },
+                                painter = painterResource(id = R.drawable.png_next_100),
+                                contentDescription = "Next track",
                             )
                         }
                     }
@@ -392,6 +408,8 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             showToast = MutableSharedFlow<Int>(),
             onDeleteTrack = { },
             onDownloadTrack = { },
+            onPreviousTrack = { },
+            onNextTrack = { }
         )
     }
 }

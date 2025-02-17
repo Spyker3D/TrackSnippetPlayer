@@ -69,6 +69,7 @@ class AudioPlayerService : LifecycleService() {
                 updatePlaybackState()
                 updateNotification()
             }
+
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 currentIndex = exoPlayer.currentMediaItemIndex
                 updateTrackInfoFromPlaylist()
@@ -216,6 +217,22 @@ class AudioPlayerService : LifecycleService() {
                 val position = intent.getLongExtra(SEEK_POSITION, 0L)
                 exoPlayer.seekTo(position)
             }
+
+            ACTION_PREVIOUS_TRACK -> {
+                if (playlist.isNotEmpty() && currentIndex > 0) {
+                    currentIndex--
+                    exoPlayer.seekTo(currentIndex, 0)
+                    updateTrackInfoFromPlaylist()
+                }
+            }
+
+            ACTION_NEXT_TRACK -> {
+                if (playlist.isNotEmpty() && currentIndex < playlist.size - 1) {
+                    currentIndex++
+                    exoPlayer.seekTo(currentIndex, 0)
+                    updateTrackInfoFromPlaylist()
+                }
+            }
         }
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
@@ -223,6 +240,16 @@ class AudioPlayerService : LifecycleService() {
     }
 
     private fun createNotification(): Notification {
+        val previousTrackAction = NotificationCompat.Action(
+            R.drawable.png_previous,
+            "Previous",
+            PendingIntent.getService(
+                this, 1,
+                Intent(this, AudioPlayerService::class.java).apply { action = ACTION_PREVIOUS_TRACK },
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        )
+
         val rewindAction = NotificationCompat.Action(
             R.drawable.png_rewind,
             "Rewind",
@@ -265,6 +292,16 @@ class AudioPlayerService : LifecycleService() {
             )
         )
 
+        val nextTrackAction = NotificationCompat.Action(
+            R.drawable.png_next,
+            "Previous",
+            PendingIntent.getService(
+                this, 1,
+                Intent(this, AudioPlayerService::class.java).apply { action = ACTION_NEXT_TRACK },
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        )
+
         // Задаем contentIntent для открытия приложения при нажатии на уведомление в свернутом состоянии
         val contentIntent = PendingIntent.getActivity(
             this,
@@ -286,9 +323,11 @@ class AudioPlayerService : LifecycleService() {
             .setContentText(artistName)
             .setSmallIcon(R.drawable.ic_music_note)
             .setContentIntent(contentIntent)
+            .addAction(previousTrackAction)
             .addAction(rewindAction)
             .addAction(playPauseAction)
             .addAction(fastForwardAction)
+            .addAction(nextTrackAction)
             .setStyle(
                 androidx.media.app.NotificationCompat.MediaStyle()
                     .setMediaSession(mediaSession.sessionToken)
@@ -321,6 +360,10 @@ class AudioPlayerService : LifecycleService() {
             "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_REWIND"
         const val ACTION_FAST_FORWARD =
             "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_FAST_FORWARD"
+        const val ACTION_PREVIOUS_TRACK =
+            "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_PREVIOUS_TRACK"
+        const val ACTION_NEXT_TRACK =
+            "com.spyker3d.tracksnippetplayer.audioplayer.presentation.ACTION_NEXT_TRACK"
         const val ACTION_STOP = "com.spyker3d.tracksnippetplayer.ACTION_STOP"
         const val ACTION_SEEK_TO = "com.spyker3d.tracksnippetplayer.ACTION_SEEK_TO"
         const val CHANNEL_ID = "audio_player_channel"

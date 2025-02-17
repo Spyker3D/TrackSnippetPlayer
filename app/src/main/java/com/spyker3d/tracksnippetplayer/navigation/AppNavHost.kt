@@ -202,7 +202,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     showToast = audioPlayerViewModel.showToast,
                     onDeleteTrack = audioPlayerViewModel::deleteTrackFromDownloads,
                     onDownloadTrack = audioPlayerViewModel::downloadTrack,
-
+                    onNextTrack = audioPlayerViewModel::nextTrack,
+                    onPreviousTrack = audioPlayerViewModel::previousTrack,
                 )
             }
         }

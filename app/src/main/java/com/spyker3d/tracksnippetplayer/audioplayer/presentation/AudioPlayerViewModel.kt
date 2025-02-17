@@ -146,6 +146,14 @@ class AudioPlayerViewModel @Inject constructor(
         )
     }
 
+    fun nextTrack() {
+        sendCommandToService(AudioPlayerService.ACTION_NEXT_TRACK)
+    }
+
+    fun previousTrack() {
+        sendCommandToService(AudioPlayerService.ACTION_PREVIOUS_TRACK)
+    }
+
     fun downloadTrack(track: Track) {
         viewModelScope.launch {
             val listOfDownloadedTracks = trackDownloadInteractor.getAllDownloadedTracksId()
