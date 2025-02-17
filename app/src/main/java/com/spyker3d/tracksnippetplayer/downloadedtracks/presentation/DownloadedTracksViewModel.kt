@@ -33,7 +33,6 @@ class DownloadedTracksViewModel @Inject constructor(
                         action = AudioPlayerService.ACTION_PREPARE_PLAYLIST
                         putParcelableArrayListExtra(TRACK_LIST, ArrayList(trackList))
                     }
-                    ContextCompat.startForegroundService(context, intent)
                 }
             }
         }

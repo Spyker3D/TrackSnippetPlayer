@@ -39,6 +39,16 @@ class SearchTrackViewModel @Inject constructor(
     private var searchJob: Job? = null
     private var latestSearchText = ""
 
+    init {
+        if (searchTrackState is SearchState.Content) {
+            val trackList = (searchTrackState as SearchState.Content).trackList
+            val intent = Intent(context, AudioPlayerService::class.java).apply {
+                action = AudioPlayerService.ACTION_PREPARE_PLAYLIST
+                putParcelableArrayListExtra(TRACK_LIST, ArrayList(trackList))
+            }
+        }
+    }
+
     fun searchTrack(trackName: String) {
         if (trackName.isEmpty()) {
             latestSearchText = trackName
