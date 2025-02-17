@@ -45,7 +45,8 @@ fun SearchTrackScreen(
     showToast: SharedFlow<Int>,
     onUpdateTrackList: (List<Track>) -> Unit,
     navScreenInfo: String,
-    navController: NavHostController
+    navController: NavHostController,
+    lastSearchedText: String
 ) {
     Box(
         modifier = modifier,
@@ -74,7 +75,7 @@ fun SearchTrackScreen(
                             bottom = paddingValues.calculateBottomPadding(),
                         ),
                 ) {
-                    var inputText by remember { mutableStateOf("") }
+                    var inputText by remember { mutableStateOf(lastSearchedText) }
                     Column {
                         SearchTextField(
                             text = inputText,
@@ -204,7 +205,8 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             showToast = MutableSharedFlow<Int>(),
             onUpdateTrackList = { },
             navScreenInfo = "",
-            navController = rememberNavController()
+            navController = rememberNavController(),
+            lastSearchedText = ""
         )
     }
 }

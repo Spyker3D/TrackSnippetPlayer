@@ -36,18 +36,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.spyker3d.tracksnippetplayer.R
-import com.spyker3d.tracksnippetplayer.common.domain.model.Track
-import com.spyker3d.tracksnippetplayer.search.presentation.SearchState
-import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackScreen
-import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerScreen
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerViewModel
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TrackState
+import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksViewModel
 import com.spyker3d.tracksnippetplayer.search.presentation.DOWNLOADS_SCREEN
 import com.spyker3d.tracksnippetplayer.search.presentation.SEARCH_SCREEN
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchState
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackScreen
+import com.spyker3d.tracksnippetplayer.search.presentation.SearchTrackViewModel
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
 import kotlinx.serialization.Serializable
 
@@ -139,7 +139,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             composable<SearchTracks> {
                 val searchTrackViewModel: SearchTrackViewModel = hiltViewModel()
                 val searchState: SearchState = searchTrackViewModel.searchTrackState
-
+                val lastSearchedText = searchTrackViewModel.lastSearchForEditText
                 val navBackStackEntry = remember { navController.currentBackStackEntry }
                 val fromAudioPlayer = navBackStackEntry?.savedStateHandle?.get<String>("fromAudioPlayer") ?: ""
 
@@ -160,7 +160,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     showToast = searchTrackViewModel.showToast,
                     onUpdateTrackList = searchTrackViewModel::updateTrackListInService,
                     navScreenInfo = fromAudioPlayer,
-                    navController = navController
+                    navController = navController,
+                    lastSearchedText = lastSearchedText
                 )
             }
 

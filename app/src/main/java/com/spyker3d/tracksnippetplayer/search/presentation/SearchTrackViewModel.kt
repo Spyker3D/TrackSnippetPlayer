@@ -11,7 +11,6 @@ import androidx.lifecycle.viewModelScope
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.AudioPlayerService
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TRACK_LIST
-import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TRACK_NAME
 import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import com.spyker3d.tracksnippetplayer.search.domain.usecase.SearchTrackUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -40,9 +39,13 @@ class SearchTrackViewModel @Inject constructor(
     private var searchJob: Job? = null
     private var latestSearchText = ""
 
+    var lastSearchForEditText by mutableStateOf<String>(latestSearchText)
+        private set
+
     fun searchTrack(trackName: String) {
         if (trackName.isEmpty()) {
             latestSearchText = trackName
+            lastSearchForEditText = latestSearchText
             searchTrackState = SearchState.Empty
             return
         }
@@ -51,6 +54,7 @@ class SearchTrackViewModel @Inject constructor(
 
         searchJob?.cancel()
         latestSearchText = trackName
+        lastSearchForEditText = latestSearchText
 
         searchJob = viewModelScope.launch {
             delay(INPUT_TRACK_SEARCH_DELAY)
