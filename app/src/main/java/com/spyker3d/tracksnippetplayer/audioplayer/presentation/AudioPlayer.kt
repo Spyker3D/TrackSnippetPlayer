@@ -1,5 +1,6 @@
 package com.spyker3d.tracksnippetplayer.audioplayer.presentation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,7 +49,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.placeholder
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.common.domain.model.Track
+import com.spyker3d.tracksnippetplayer.search.presentation.DOWNLOADS_SCREEN
 import com.spyker3d.tracksnippetplayer.search.presentation.LoadingScreen
+import com.spyker3d.tracksnippetplayer.search.presentation.SEARCH_SCREEN
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 import com.spyker3d.tracksnippetplayer.utils.makeToast
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -74,6 +77,12 @@ fun AudioPlayerScreen(
     onNextTrack: () -> Unit,
     onPreviousTrack: () -> Unit
 ) {
+    val navScreenInfo = if (isDownloadsScreen) DOWNLOADS_SCREEN else SEARCH_SCREEN
+
+    BackHandler {
+        onBackPressed.invoke()
+    }
+
     Box(
         modifier = modifier.fillMaxSize(),
     ) {

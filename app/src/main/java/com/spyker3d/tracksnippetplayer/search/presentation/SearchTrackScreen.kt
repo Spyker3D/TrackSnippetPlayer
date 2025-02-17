@@ -24,12 +24,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import com.spyker3d.tracksnippetplayer.R
 import com.spyker3d.tracksnippetplayer.common.domain.model.Track
 import com.spyker3d.tracksnippetplayer.ui.theme.TrackSnippetPlayerTheme
 import com.spyker3d.tracksnippetplayer.utils.makeToast
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+
+const val SEARCH_SCREEN = "SearchScreen"
+const val DOWNLOADS_SCREEN = "DownloadsScreen"
 
 @Composable
 fun SearchTrackScreen(
@@ -39,14 +44,21 @@ fun SearchTrackScreen(
     onSearchTrack: (trackName: String) -> Unit,
     showToast: SharedFlow<Int>,
     onUpdateTrackList: (List<Track>) -> Unit,
+    navScreenInfo: String,
+    navController: NavHostController
 ) {
     Box(
         modifier = modifier,
     ) {
+        // список треков для AudioPlayerService обновляется только если переходим с экрана загрузок,
+        // если переходим с экрана плеера, на который попали с экрана поиска, обновления не происходит,
+        // список сохраняется старый
         LaunchedEffect(Unit) {
-            if (searchState is SearchState.Content) {
+            if (searchState is SearchState.Content && navScreenInfo != SEARCH_SCREEN) {
                 val trackList = (searchState as SearchState.Content).trackList
                 onUpdateTrackList(trackList)
+            } else {
+                navController.currentBackStackEntry?.savedStateHandle?.remove<String>("fromAudioPlayer")
             }
         }
         Scaffold(
@@ -191,6 +203,8 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
             ),
             showToast = MutableSharedFlow<Int>(),
             onUpdateTrackList = { },
+            navScreenInfo = "",
+            navController = rememberNavController()
         )
     }
 }

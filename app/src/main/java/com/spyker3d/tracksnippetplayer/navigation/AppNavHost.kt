@@ -15,6 +15,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -45,6 +46,8 @@ import com.spyker3d.tracksnippetplayer.audioplayer.presentation.PlaybackState
 import com.spyker3d.tracksnippetplayer.audioplayer.presentation.TrackState
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksScreen
 import com.spyker3d.tracksnippetplayer.downloadedtracks.presentation.DownloadedTracksViewModel
+import com.spyker3d.tracksnippetplayer.search.presentation.DOWNLOADS_SCREEN
+import com.spyker3d.tracksnippetplayer.search.presentation.SEARCH_SCREEN
 import com.spyker3d.tracksnippetplayer.ui.theme.grey
 import kotlinx.serialization.Serializable
 
@@ -137,15 +140,18 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 val searchTrackViewModel: SearchTrackViewModel = hiltViewModel()
                 val searchState: SearchState = searchTrackViewModel.searchTrackState
 
+                val navBackStackEntry = remember { navController.currentBackStackEntry }
+                val fromAudioPlayer = navBackStackEntry?.savedStateHandle?.get<String>("fromAudioPlayer") ?: ""
+
                 SearchTrackScreen(
-                    onNavigateToAudioPlayer = { id, trackPreviewUrl, trackListIds, trackListUrls ->
+                    onNavigateToAudioPlayer = { id, trackPreviewUrl, trackListIds, trackListUrls->
                         navController.navigate(
                             route = AudioPlayer(
                                 trackId = id,
                                 trackPreviewUrl = trackPreviewUrl,
                                 isDownloadedScreen = false,
                                 trackListIds = trackListIds,
-                                trackListUrls = trackListUrls
+                                trackListUrls = trackListUrls,
                             )
                         )
                     },
@@ -153,6 +159,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     onSearchTrack = searchTrackViewModel::searchTrack,
                     showToast = searchTrackViewModel.showToast,
                     onUpdateTrackList = searchTrackViewModel::updateTrackListInService,
+                    navScreenInfo = fromAudioPlayer,
+                    navController = navController
                 )
             }
 
@@ -181,6 +189,7 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
             composable<AudioPlayer> {
                 val args = it.toRoute<AudioPlayer>()
                 val isDownloadedScreen = args.isDownloadedScreen
+                val searchScreenArgument = if (isDownloadedScreen) DOWNLOADS_SCREEN else SEARCH_SCREEN
 
                 val audioPlayerViewModel: AudioPlayerViewModel = hiltViewModel()
                 val audioPlayerState: State<PlaybackState> =
@@ -190,7 +199,10 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                 AudioPlayerScreen(
                     trackId = args.trackId,
                     trackPreviewUrl = args.trackPreviewUrl,
-                    onBackPressed = { navController.popBackStack() },
+                    onBackPressed = {
+                        navController.previousBackStackEntry?.savedStateHandle?.set("fromAudioPlayer", searchScreenArgument)
+                        navController.popBackStack()
+                    },
                     playbackState = audioPlayerState.value,
                     onRewind = audioPlayerViewModel::rewind,
                     onPlayPause = audioPlayerViewModel::playPause,
