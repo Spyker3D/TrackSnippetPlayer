@@ -151,7 +151,8 @@ fun AppNavHost(navController: NavHostController = rememberNavController()) {
                     },
                     searchState = searchState,
                     onSearchTrack = searchTrackViewModel::searchTrack,
-                    showToast = searchTrackViewModel.showToast
+                    showToast = searchTrackViewModel.showToast,
+                    onUpdateTrackList = searchTrackViewModel::updateTrackListInService,
                 )
             }
 

@@ -37,11 +37,18 @@ fun SearchTrackScreen(
     onNavigateToAudioPlayer: (trackId: Long, trackPreviewUrl: String, trackListIds: List<Long>, trackListsPreview: List<String>) -> Unit,
     searchState: SearchState,
     onSearchTrack: (trackName: String) -> Unit,
-    showToast: SharedFlow<Int>
+    showToast: SharedFlow<Int>,
+    onUpdateTrackList: (List<Track>) -> Unit,
 ) {
     Box(
         modifier = modifier,
     ) {
+        LaunchedEffect(Unit) {
+            if (searchState is SearchState.Content) {
+                val trackList = (searchState as SearchState.Content).trackList
+                onUpdateTrackList(trackList)
+            }
+        }
         Scaffold(
             containerColor = MaterialTheme.colorScheme.surface,
             topBar = { TopBar() },
@@ -182,7 +189,8 @@ fun CurrentPurchasesListScreenScaffoldPreview() {
                     ),
                 )
             ),
-            showToast = MutableSharedFlow<Int>()
+            showToast = MutableSharedFlow<Int>(),
+            onUpdateTrackList = { },
         )
     }
 }
