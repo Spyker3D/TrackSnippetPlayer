@@ -174,7 +174,7 @@ class AudioPlayerService : LifecycleService() {
                     // Формируется список MediaItem и устанавливаем их в плеер
                     val mediaItems = playlist.map { track ->
                         MediaItem.Builder()
-                            .setUri(track.audioPreview) // или другой URL, по которому воспроизводится трек
+                            .setUri(track.audioPreview)
                             .setMediaMetadata(
                                 MediaMetadata.Builder()
                                     .setTitle(track.name)
